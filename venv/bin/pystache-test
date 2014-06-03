@@ -1,9 +1,0 @@
-#!/Users/partec/Dev/heroku/bolao/venv/bin/python
-# EASY-INSTALL-ENTRY-SCRIPT: 'pystache==0.5.4','console_scripts','pystache-test'
-__requires__ = 'pystache==0.5.4'
-import sys
-from pkg_resources import load_entry_point
-
-sys.exit(
-   load_entry_point('pystache==0.5.4', 'console_scripts', 'pystache-test')()
-)
