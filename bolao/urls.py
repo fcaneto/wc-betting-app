@@ -8,7 +8,7 @@ from bolao.admin import GameModelAdmin
 admin.autodiscover()
 admin.site.register(Team)
 admin.site.register(Group)
-admin.site.register(Game, GameModelAdmin)
+admin.site.register(Game)
 admin.site.register(Stadium)
 admin.site.register(Bet)
 

@@ -101,14 +101,109 @@ def bet(request):
         third_place = Bet.objects.get(game__id=63)
         final = Bet.objects.get(game__id=64)
 
+        score_by_bets = compute_all_bets(request.user)
+        total_score = reduce(lambda x,y: x+y, score_by_bets.values(), 0.0)
+
+        # Adicionando estes atributo a cada bet para facilitar template
+        for bet in group_bets:
+            bet.player_score = score_by_bets[bet.game.id]
+        for bet in round_16_bets:
+            bet.player_score = score_by_bets[bet.game.id]
+        for bet in quarter_bets:
+            bet.player_score = score_by_bets[bet.game.id]
+        for bet in semi_bets:
+            bet.player_score = score_by_bets[bet.game.id]
+        third_place.player_score = score_by_bets[bet.game.id]
+        final.player_score = score_by_bets[bet.game.id]
+
+        # pontos por acertar os quatro primeiros
+        podium_scores = {1: 0.0, 2:0.0, 3:0.0, 4:0.0}
+        if third_place.get_loser() == third_place.game.get_loser():
+            podium_scores[4] = 3
+            total_score += 3
+        if third_place.get_winner() == third_place.game.get_winner():
+            podium_scores[3] = 4
+            total_score += 4
+        if final.get_loser() == final.game.get_loser():
+            podium_scores[2] = 10
+            total_score += 10
+        if final.get_winner() == final.game.get_winner():
+            podium_scores[1] = 15
+            total_score += 15
+
         return render_to_response('player.html',
                                   {'group_bets': group_bets,
                                    'round_16_bets': round_16_bets,
                                    'quarter_bets': quarter_bets,
                                    'semi_bets': semi_bets,
                                    'third_place': third_place,
-                                   'final': final},
+                                   'final': final,
+                                   'total_score': total_score,
+                                   'podium_scores': podium_scores},
                                   RequestContext(request))
 
+
+def compute_bet_score(bet):
+    score = 0.0
+
+    if bet.is_a_tie() and bet.game.is_a_tie():
+        # empate
+        score += 4
+        if bet.home_score == bet.game.home_goals_normal_time:
+            score += 2
+    else:
+        # outro resultado dif. de empate
+        if bet.home_score == bet.game.home_goals_normal_time:
+            score += 1.5
+        if bet.away_score == bet.game.away_goals_normal_time:
+            score += 1.5
+        if bet.get_winner() == bet.game.get_winner():
+            score += 3
+
+    return score
+
+def compute_all_bets(user):
+    score_by_game = {}
+
+    for bet in Bet.objects.filter(player=user):
+        bet_score = compute_bet_score(bet)
+
+        # Extra points for secound round
+        if bet.game.stage == Game.ROUND_OF_16:
+            if bet.home_team == bet.game.home_team:
+                bet_score += 6
+            if bet.away_team == bet.game.away_team:
+                bet_score += 6
+
+        if bet.game.stage == Game.QUARTER_FINALS:
+            if bet.home_team == bet.game.home_team:
+                bet_score += 8
+            if bet.away_team == bet.game.away_team:
+                bet_score += 8
+
+        if bet.game.stage == Game.SEMI_FINALS:
+            if bet.home_team == bet.game.home_team:
+                bet_score += 10
+            if bet.away_team == bet.game.away_team:
+                bet_score += 10
+
+        if bet.game.id == 63:
+            # Disputa do terceiro lugar
+            if bet.home_team == bet.game.home_team:
+                bet_score += 6
+            if bet.away_team == bet.game.away_team:
+                bet_score += 6
+
+        if bet.game.id == 64:
+            # Disputa da final
+            if bet.home_team == bet.game.home_team:
+                bet_score += 12
+            if bet.away_team == bet.game.away_team:
+                bet_score += 12
+
+        score_by_game[bet.game.id] = bet_score
+
+
+    return score_by_game
 
 

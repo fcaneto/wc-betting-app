@@ -8,6 +8,17 @@
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{STATIC_URL}}/css/style.css">
 
+  <style>
+    .gray {
+      background-color: lightgray;
+    }
+
+    body {
+      margin-bottom: 20px;
+    }
+
+  </style>
+
 </head>
 <body>
 
@@ -36,56 +47,202 @@
 
   {% if group_bets %}
 
-  <h3>Fase de Grupos</h3>
+  <h3>Pontuação atual: {{ total_score }}</h3>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h4>Fase de Grupos</h4>
+    </div>
+    <div class="col-md-4">
+      <h4>Resultado</h4>
+    </div>
+    <div class="col-md-4">
+      <h4>Pontos</h4>
+    </div>
+  </div>
+
   {% for bet in group_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} -
-    {{match.away_team.name}}</p>
+  <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} -
+        {{match.away_team.name}}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{ bet.player_score }}</h6>
+    </div>
+  </div>
   {% endwith %}
   {% endfor %}
 
   <h3>Oitavas</h3>
   {% for bet in round_16_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-    - {{bet.away_team.name}} > {{ bet.winner.name }}</p>
+  <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{ bet.player_score }}</h6>
+    </div>
+  </div>
   {% endwith %}
   {% endfor %}
 
   <h3>Quartas</h3>
   {% for bet in quarter_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-    - {{bet.away_team.name}} > {{ bet.winner.name }}</p>
+  <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{ bet.player_score }}</h6>
+    </div>
+  </div>
   {% endwith %}
   {% endfor %}
 
   <h3>Semi-finais</h3>
   {% for bet in semi_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-    - {{bet.away_team.name}} > {{ bet.winner.name }}</p>
+  <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{ bet.player_score }}</h6>
+    </div>
+  </div>
   {% endwith %}
   {% endfor %}
 
   <h3>Disputa de terceiro lugar</h3>
   {% with third_place as bet %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{bet.away_team.name}} > 3o.
-    lugar: {{ bet.winner.name }}</p>
+  <div class="row">
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{ bet.player_score }}</h6>
+    </div>
+  </div>
   {% endwith %}
   {% endwith %}
 
   <h3>Final</h3>
   {% with final as bet %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{bet.away_team.name}} >
-    Campeão: {{ bet.winner.name }}</p>
+  <div class="row gray">
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{ bet.player_score }}</h6>
+    </div>
+  </div>
   {% endwith %}
   {% endwith %}
 
+  <div class="row">
+    <div class="col-md-12">
+        <h3>Resultado final</h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+        <h6>4o. lugar: {{third_place.get_loser.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{third_place.game.get_loser.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{podium_scores.4}}</h6>
+    </div>
+  </div>
+
+  <div class="row gray">
+    <div class="col-md-4">
+        <h6>3o. lugar: {{third_place.get_winner.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{third_place.game.get_winner.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{podium_scores.3}}</h6>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+        <h6>Vice-campeão: {{final.get_loser.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{final.game.get_loser.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{podium_scores.2}}</h6>
+    </div>
+  </div>
+
+  <div class="row gray">
+    <div class="col-md-4">
+        <h6>Campeão: {{final.get_winner.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{final.game.get_winner.name}}</h6>
+    </div>
+    <div class="col-md-4">
+        <h6>{{podium_scores.1}}</h6>
+    </div>
+  </div>
+
+
   {% else %}
-  <h4>Não fizesse nenhuma aposta, jumento!</h4>
+  <h4>Não fizesse nenhuma aposta ainda.</h4>
   {% endif %}
 
 </div>

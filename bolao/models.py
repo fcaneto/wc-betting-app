@@ -109,9 +109,22 @@ class Game(TimestampedModel):
     home_goals_penalties = models.IntegerField(null=True, default=0)
     away_goals_penalties = models.IntegerField(null=True, default=0)
 
-    def __unicode__(self):
-        return "%s X %s" % (self.home_team, self.away_team)
+    winner = models.ForeignKey(Team, null=True)
 
+    def __unicode__(self):
+        return "[%s] %s X %s" % (self.id, self.home_team, self.away_team)
+
+    def is_a_tie(self):
+        return self.home_goals_normal_time == self.away_goals_normal_time
+
+    def get_winner(self):
+        if self.is_a_tie():
+            return self.winner
+        else:
+            return self.home_team if self.home_goals_normal_time > self.away_goals_normal_time else self.away_team
+
+    def get_loser(self):
+        return self.home_team if self.get_winner() == self.away_team else self.away_team
 
 class Bet(TimestampedModel):
     player = models.ForeignKey(User)
@@ -135,3 +148,15 @@ class Bet(TimestampedModel):
             return '[%s] %s %s X %s %s' % (self.game.id, self.game.home_team,
                                            self.home_score, self.away_score,
                                            self.game.away_team)
+
+    def is_a_tie(self):
+        return self.home_score == self.away_score
+
+    def get_winner(self):
+        if self.is_a_tie():
+            return self.winner
+        else:
+            return self.home_team if self.home_score > self.away_score else self.away_team
+
+    def get_loser(self):
+        return self.home_team if self.get_winner() == self.away_team else self.away_team
