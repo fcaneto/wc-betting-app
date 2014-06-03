@@ -19,12 +19,13 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        <li class=""><a href="/">Simulador</a></li>
         <li class="active"><a href="/home/">Minha aposta</a></li>
-        <li><a href="/home/">Classificação</a></li>
+        <li class=""><a href="#">Classificação</a></li>
       </ul>
 
       <div class="navbar-nav navbar-right">
-        <button class="btn navbar-btn">Sair</button>
+        <a href="/logout" class="btn navbar-btn">Sair</a>
       </div>
 
     </div>
@@ -33,47 +34,59 @@
 
 <div class="container">
 
+  {% if group_bets %}
+
   <h3>Fase de Grupos</h3>
   {% for bet in group_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{match.away_team.name}}</p>
+  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} -
+    {{match.away_team.name}}</p>
   {% endwith %}
   {% endfor %}
 
   <h3>Oitavas</h3>
   {% for bet in round_16_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{match.away_team.name}} -- {{ bet.winner.name }}</p>
+  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+    - {{bet.away_team.name}} > {{ bet.winner.name }}</p>
   {% endwith %}
   {% endfor %}
 
   <h3>Quartas</h3>
   {% for bet in quarter_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{match.away_team.name}} -- {{ bet.winner.name }}</p>
+  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+    - {{bet.away_team.name}} > {{ bet.winner.name }}</p>
   {% endwith %}
   {% endfor %}
 
   <h3>Semi-finais</h3>
   {% for bet in semi_bets %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{match.away_team.name}} -- {{ bet.winner.name }}</p>
+  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
+    - {{bet.away_team.name}} > {{ bet.winner.name }}</p>
   {% endwith %}
   {% endfor %}
 
   <h3>Disputa de terceiro lugar</h3>
   {% with third_place as bet %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{match.away_team.name}} -- 3o. lugar: {{ bet.winner.name }}</p>
+  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{bet.away_team.name}} > 3o.
+    lugar: {{ bet.winner.name }}</p>
   {% endwith %}
   {% endwith %}
 
   <h3>Final</h3>
   {% with final as bet %}
   {% with bet.game as match %}
-  <p>Jogo {{match.id}}: {{match.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{match.away_team.name}} - Campeão: -- {{ bet.winner.name }}</p>
+  <p>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}} - {{bet.away_team.name}} >
+    Campeão: {{ bet.winner.name }}</p>
   {% endwith %}
   {% endwith %}
+
+  {% else %}
+  <h4>Não fizesse nenhuma aposta, jumento!</h4>
+  {% endif %}
 
 </div>
 

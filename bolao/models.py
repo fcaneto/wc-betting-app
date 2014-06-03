@@ -11,10 +11,12 @@ from django.contrib.auth.models import User
 --------------------------------------------------------------------------------------------'''
 
 ''' Superclasses for Models that stores timestamp for all changes. '''
+
+
 class TimestampedModel(models.Model):
     class Meta:
         abstract = True
-    
+
     changed_timestamp = models.DateTimeField(default=datetime.datetime.now, verbose_name=u'Horário')
     deleted = models.BooleanField(verbose_name=u'Apagado', default=False)
 
@@ -25,13 +27,15 @@ class TimestampedModel(models.Model):
         else:
             if self.changed_timestamp == 0:
                 self.changed_timestamp = datetime.datetime.now()
-                
+
         super(TimestampedModel, self).save(*args, **kwargs)
 
 
 '''-------------------------------------------------------------------------------------------
 ---------- APP Models --------------------------------------------------------------------
 --------------------------------------------------------------------------------------------'''
+
+
 class Group(models.Model):
     name = models.CharField(max_length=1, default="")
     #teams = models.ManyToManyField('Team', through='GroupTeamRelationship')
@@ -106,7 +110,8 @@ class Game(TimestampedModel):
     away_goals_penalties = models.IntegerField(null=True, default=0)
 
     def __unicode__(self):
-        return "%s X %s" % (self.home_team.code, self.away_team.code)
+        return "%s X %s" % (self.home_team, self.away_team)
+
 
 class Bet(TimestampedModel):
     player = models.ForeignKey(User)
@@ -114,10 +119,19 @@ class Bet(TimestampedModel):
     home_score = models.IntegerField(default=0)
     away_score = models.IntegerField(default=0)
 
+    home_team = models.ForeignKey(Team, related_name='home_bets',
+                                  related_query_name='home_bet', null=True, default=None)
+    away_team = models.ForeignKey(Team, related_name='away_bets',
+                                  related_query_name='away_bet', null=True, default=None)
+
     winner = models.ForeignKey(Team, null=True)
 
     def __str__(self):
-        winner_txt = '- ' + self.winner.code if self.winner else ''
-        return '[%s] %s %s X %s %s %s' % (self.game.id, self.game.home_team,
-                                          self.home_score, self.away_score,
-                                          self.game.away_team, winner_txt)
+        if self.winner:
+            return '[%s] %s %s X %s %s > %s' % (self.game.id, self.home_team,
+                                              self.home_score, self.away_score,
+                                              self.away_team, self.winner)
+        else:
+            return '[%s] %s %s X %s %s' % (self.game.id, self.game.home_team,
+                                           self.home_score, self.away_score,
+                                           self.game.away_team)

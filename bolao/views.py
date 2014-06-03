@@ -14,13 +14,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 from bolao.models import Game, Bet, Team
 
+
 @login_required(login_url='login')
 def home(request):
     print request.user
     return render_to_response('bolao.html', {}, RequestContext(request))
 
-def login(request):
 
+def login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -41,6 +42,7 @@ def login(request):
     else:
         return render_to_response('login.html', {}, RequestContext(request))
 
+
 @login_required
 def logout(request):
     logout_at_server(request)
@@ -53,38 +55,49 @@ def bet(request):
 
         print request.user.first_name
         bets = json.loads(request.body)
-        print bets
 
         Bet.objects.filter(player=request.user).delete()
 
-        for bet in bets:
-            id = bet['id']
-            home_score = int(bet['homeScore'])
-            away_score = int(bet['awayScore'])
+        for bet_dict in bets:
+            id = bet_dict['id']
+            home_score = int(bet_dict['homeScore'])
+            away_score = int(bet_dict['awayScore'])
 
+            home_team = None
+            away_team = None
             winner = None
             try:
-                code = bet['winnerCode']
-                print code
+                code = bet_dict['homeTeamCode']
+                home_team = Team.objects.get(code=code)
+                code = bet_dict['awayTeamCode']
+                away_team = Team.objects.get(code=code)
+                code = bet_dict['winnerCode']
                 winner = Team.objects.get(code=code)
-                print winner
-            except:
-                print 'No winner'
+            except KeyError:
+                print 'Not a second round match'
 
             game = Game.objects.get(pk=id)
-            Bet(player=request.user,
+
+            bet = Bet(
+                player=request.user,
                 game=game,
                 home_score=home_score,
                 away_score=away_score,
-                winner=winner).save()
+                home_team=home_team,
+                away_team=away_team,
+                winner=winner)
+            bet.save()
 
         return HttpResponse()
 
     else:
         group_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.GROUP).order_by('game__id')
-        round_16_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.ROUND_OF_16).order_by('game__id')
-        quarter_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.QUARTER_FINALS).order_by('game__id')
-        semi_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.SEMI_FINALS).order_by('game__id')
+        round_16_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.ROUND_OF_16).order_by(
+            'game__id')
+        quarter_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.QUARTER_FINALS).order_by(
+            'game__id')
+        semi_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.SEMI_FINALS).order_by(
+            'game__id')
         third_place = Bet.objects.get(game__id=63)
         final = Bet.objects.get(game__id=64)
 
