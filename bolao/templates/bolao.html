@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" ng-app="bolaoApp">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bolão</title>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-cookies.min.js"></script>
+  <script src="{{STATIC_URL}}js/models.js"></script>
+  <script src="{{STATIC_URL}}js/controllers.js"></script>
+
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}/css/style.css">
+
+</head>
+
+<body>
+
+<div ng-controller="LeagueController as cup">
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <span class="navbar-brand" href="#">{{user.first_name}} {{user.last_name}}</span>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/home/">Simulador</a></li>
+      </ul>
+
+      <button class="btn btn-success navbar-btn" ng-click="submit()"
+        ng-disabled="cup.finals.match64.getWinner() === null || cup.finals.match63.getWinner() === null">Enviar aposta</button>
+
+      <div class="navbar-nav navbar-right">
+      <a href="/logout" class="btn navbar-btn">Sair</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% verbatim %}
+<div class="container-fluid">
+
+  <div class="groups">
+
+    <div ng-repeat="group in cup.groups">
+      <h3>Grupo {{group.name}}</h3>
+
+      <div class="group-table">
+
+        <div class="matches">
+          <div class="match-data" data-ng-repeat="match in group.matches">
+            <span class="home-team">{{group.teams[match.homeTeam].code | uppercase}}</span>
+            <img ng-src="/static/flags/{{group.teams[match.homeTeam].code}}.png">
+            <input ng-model="match.homeScore" ng-change="refreshStandings(group)">
+
+            <span class="vs">X</span>
+
+            <input ng-model="match.awayScore" ng-change="refreshStandings(group)">
+            <img ng-src="/static/flags/{{group.teams[match.awayTeam].code}}.png">
+            <span class="away-team">{{group.teams[match.awayTeam].code | uppercase}}</span>
+          </div>
+        </div>
+
+        <div class="standings">
+          <div class="standings-table">
+            <div class="team header"><span>Equipe</span></div>
+            <div class="stats header"><span>P</span></div>
+            <div class="stats header"><span>SG</span></div>
+            <div class="stats header"><span>GP</span></div>
+            <div class="stats header"><span>GC</span></div>
+          </div>
+
+          <div class="standings-table" data-ng-repeat="team in group.getTeamsByRank()">
+            <div class="team">
+              <img ng-src="/static/flags/{{team.code}}.png">
+              <span>{{team.name}}</span>
+            </div>
+            <div class="stats"><span>{{team.points}}</span></div>
+            <div class="stats"><span>{{team.goalsMade - team.goalsTaken}}</span></div>
+            <div class="stats"><span>{{team.goalsMade}}</span></div>
+            <div class="stats"><span>{{team.goalsTaken}}</span></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="roundOf16">
+    <h3>Oitavas-de-final</h3>
+
+    <div class="match-data" data-ng-repeat="match in cup.roundOf16">
+      <button class="btn" ng-show="match.homeTeam" ng-click="setTiedMatchWinner(match, match.homeTeam)"
+              ng-class="{winner: match.homeTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <span class="home-team">{{match.homeTeam.code | uppercase}}</span>
+        <img ng-src="/static/flags/{{match.homeTeam.code}}.png">
+      </button>
+      <div ng-hide="match.homeTeam">
+        <span class="home-team undefined">?</span>
+      </div>
+
+      <input ng-model="match.homeScore" ng-change="refreshFinals()">
+
+      <span class="vs">X</span>
+
+      <input ng-model="match.awayScore" ng-change="refreshFinals()">
+      <button class="btn" ng-show="match.awayTeam" ng-click="setTiedMatchWinner(match, match.awayTeam)"
+              ng-class="{winner: match.awayTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <img ng-src="/static/flags/{{match.awayTeam.code}}.png">
+        <span class="away-team">{{match.awayTeam.code | uppercase}}</span>
+      </button>
+      <div ng-hide="match.awayTeam">
+        <span class="away-team undefined">?</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="quarterFinals">
+    <h3>Quartas-de-final</h3>
+
+    <div class="match-data" data-ng-repeat="match in cup.quarterFinals">
+
+      <button class="btn" ng-show="match.homeTeam" ng-click="setTiedMatchWinner(match, match.homeTeam)"
+              ng-class="{winner: match.homeTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <span class="home-team">{{match.homeTeam.code | uppercase}}</span>
+        <img ng-src="/static/flags/{{match.homeTeam.code}}.png">
+      </button>
+      <div ng-hide="match.homeTeam">
+        <span class="home-team undefined">?</span>
+      </div>
+
+      <input ng-model="match.homeScore" ng-change="refreshFinals()">
+
+      <span class="vs">X</span>
+
+      <input ng-model="match.awayScore" ng-change="refreshFinals()">
+
+      <button class="btn" ng-show="match.awayTeam" ng-click="setTiedMatchWinner(match, match.awayTeam)"
+              ng-class="{winner: match.awayTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <img ng-src="/static/flags/{{match.awayTeam.code}}.png">
+        <span class="away-team">{{match.awayTeam.code | uppercase}}</span>
+      </button>
+      <div ng-hide="match.awayTeam">
+        <span class="away-team undefined">?</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!--TODO: redesign finals layout-->
+
+
+  <div class="semiFinals">
+    <h3>Semi-finais</h3>
+
+    <div class="match-data" data-ng-repeat="match in cup.semiFinals">
+      <button class="btn" ng-show="match.homeTeam" ng-click="setTiedMatchWinner(match, match.homeTeam)"
+              ng-class="{winner: match.homeTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <span class="home-team">{{match.homeTeam.code | uppercase}}</span>
+        <img ng-src="/static/flags/{{match.homeTeam.code}}.png">
+      </button>
+      <div ng-hide="match.homeTeam">
+        <span class="home-team undefined">?</span>
+      </div>
+      <input ng-model="match.homeScore" ng-change="refreshFinals()">
+
+      <span class="vs">X</span>
+
+      <input ng-model="match.awayScore" ng-change="refreshFinals()">
+      <button class="btn" ng-show="match.awayTeam" ng-click="setTiedMatchWinner(match, match.awayTeam)"
+              ng-class="{winner: match.awayTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <img ng-src="/static/flags/{{match.awayTeam.code}}.png">
+        <span class="away-team">{{match.awayTeam.code | uppercase}}</span>
+      </button>
+      <div ng-hide="match.awayTeam">
+        <span class="away-team undefined">?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="finals">
+    <h3>Finais</h3>
+
+    <div class="match-data" data-ng-repeat="match in cup.finals">
+
+      <h6 ng-show="$first">Disputa do terceiro lugar:</h6>
+      <h6 ng-hide="$first">Final:</h6>
+
+      <button class="btn" ng-show="match.homeTeam" ng-click="match.setTiedMatchWinner(match.homeTeam)"
+              ng-class="{winner: match.homeTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <span class="home-team">{{match.homeTeam.code | uppercase}}</span>
+        <img ng-src="/static/flags/{{match.homeTeam.code}}.png">
+      </button>
+      <div ng-hide="match.homeTeam">
+        <span class="home-team undefined">?</span>
+      </div>
+      <input ng-model="match.homeScore" ng-change="refreshFinals()">
+
+      <span class="vs">X</span>
+
+      <input ng-model="match.awayScore" ng-change="refreshFinals()">
+      <button class="btn" ng-show="match.awayTeam" ng-click="match.setTiedMatchWinner(match.awayTeam)"
+              ng-class="{winner: match.awayTeamWon(), disabled: match.isNotTied()}" ng-disabled="match.isNotTied()">
+        <img ng-src="/static/flags/{{match.awayTeam.code}}.png">
+        <span class="away-team">{{match.awayTeam.code | uppercase}}</span>
+      </button>
+      <div ng-hide="match.awayTeam">
+        <span class="away-team undefined">?</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+{% endverbatim %}
+
+</body>
+</html>

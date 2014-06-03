@@ -1,0 +1,176 @@
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
+
+.navbar .navbar-btn {
+  margin-left: 10px;
+}
+
+.container-fluid {
+  margin-bottom: 40px;
+}
+
+.groups {
+  width: 500px;
+  float: left;
+}
+
+.roundOf16 {
+  position: fixed;
+  top: 70px;
+  left: 530px;
+}
+
+.quarterFinals {
+  position: fixed;
+  top: 70px;
+  left: 785px;
+}
+
+.semiFinals {
+  position: fixed;
+  top: 380px;
+  left: 530px;
+  width: 300px;
+}
+
+.finals {
+  position: fixed;
+  top: 380px;
+  left: 785px;
+  width: 300px;
+}
+
+.finals h6 {
+  margin-top: -5px;
+}
+
+.groups .group-table {
+  width: 100%;
+  display: table;
+}
+
+.standings {
+  /*background-color: gray;*/
+  display: table-cell;
+  vertical-align: top;
+}
+
+.standings p {
+  font-size: 12px;
+  margin: 0px;
+}
+
+.standings-table {
+  width: 100%;
+  display: table;
+  margin-bottom: 2px;
+}
+
+.standings .header {
+  font-weight: bold;
+}
+
+.standings .team {
+  width: 36%;
+  display: table-cell;
+}
+
+.standings .stats {
+  width: 10%;
+  display: table-cell;
+}
+
+.standings h4 {
+  margin-top: 0px;
+}
+
+.standings img {
+  float: left;
+  margin-top: 3px;
+  margin-right: 3px;
+}
+
+.standings span {
+  float: left;
+  font-size: 14px;
+}
+
+.matches {
+  width: 42%;
+  display: table-cell;
+}
+
+.match-data {
+  width: 100%;
+  margin-bottom: 5px;
+  float: left;
+}
+
+.match-data span {
+  font-size: 14px;
+  float: left;
+}
+
+.match-data img {
+  float: left;
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: 3px;
+}
+
+.match-data button {
+  float: left;
+  margin-top: -4px;
+}
+
+.match-data .home-team {
+  width: 32px;
+  text-align: right;
+}
+
+.match-data .undefined {
+  color: red;
+  font-weight: bold;
+  width: 87px;
+  float: left;
+}
+
+.winner {
+  border-color: green;
+}
+
+.match-data .vs {
+  font-size: 12px;
+  width: 8px;
+  text-align: center;
+}
+
+.match-data input {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: #CCCCCC #E6E6E6 #E6E6E6;
+  border-image: none;
+  border-right: 1px solid #E6E6E6;
+  border-style: solid;
+  border-width: 1px;
+  font-size: 12px;
+  height: 16px;
+  text-align: center;
+  width: 16px;
+  float: left;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+/* disables spinner in chrome */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
