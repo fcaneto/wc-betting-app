@@ -109,7 +109,7 @@ class Game(TimestampedModel):
     home_goals_penalties = models.IntegerField(null=True, default=0)
     away_goals_penalties = models.IntegerField(null=True, default=0)
 
-    winner = models.ForeignKey(Team, null=True)
+    winner = models.ForeignKey(Team, null=True, blank=True)
 
     def __unicode__(self):
         return "[%s] %s X %s" % (self.id, self.home_team, self.away_team)
@@ -125,6 +125,9 @@ class Game(TimestampedModel):
 
     def get_loser(self):
         return self.home_team if self.get_winner() == self.away_team else self.away_team
+
+    def has_started(self):
+        return self.status != Game.STATUS_NOT_STARTED
 
 class Bet(TimestampedModel):
     player = models.ForeignKey(User)

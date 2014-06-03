@@ -31,8 +31,8 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li class=""><a href="/">Simulador</a></li>
-        <li class="active"><a href="/">Minha aposta</a></li>
-        <li class=""><a href="#">Classificação</a></li>
+        <li class="active"><a href="/bet/">Minha aposta</a></li>
+        <li class=""><a href="/ranking/">Classificação</a></li>
       </ul>
 
       <div class="navbar-nav navbar-right">
@@ -70,8 +70,14 @@
     </div>
 
     <div class="col-md-4">
-      <h6>{{match.home_team.name}} - {{match.home_goals_normal_time}} X
-        {{match.away_goals_normal_time}} - {{match.away_team.name}}</h6>
+      <h6>
+        {% if match.has_started %}
+        {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+        {{match.away_goals_normal_time}} - {{match.away_team.name}}
+        {% else %}
+        Ainda nem começou.
+        {% endif %}
+      </h6>
     </div>
 
     <div class="col-md-4">
@@ -87,12 +93,19 @@
   <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
     <div class="col-md-4">
       <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+        - {{bet.away_team.name}} {% if bet.is_a_tie %} <em>({{ bet.winner.name }})</em>{% endif %}</h6>
     </div>
 
     <div class="col-md-4">
-      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
-        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+      <h6>
+        {% if match.has_started %}
+          {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+          {{match.away_goals_normal_time}} - {{match.away_team.name}}
+          {% if match.is_a_tie %} <em>({{ match.get_winner.name }})</em>{% endif %}
+        {% else %}
+        Ainda nem começou.
+        {% endif %}
+      </h6>
     </div>
 
     <div class="col-md-4">
@@ -108,12 +121,19 @@
   <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
     <div class="col-md-4">
       <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+        - {{bet.away_team.name}} {% if bet.is_a_tie %} <em>({{ bet.winner.name }})</em>{% endif %}</h6>
     </div>
 
     <div class="col-md-4">
-      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
-        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+      <h6>
+        {% if match.has_started %}
+          {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+          {{match.away_goals_normal_time}} - {{match.away_team.name}}
+          {% if match.is_a_tie %} <em>({{ match.get_winner.name }})</em>{% endif %}
+        {% else %}
+        Ainda nem começou.
+        {% endif %}
+      </h6>
     </div>
 
     <div class="col-md-4">
@@ -129,12 +149,19 @@
   <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
     <div class="col-md-4">
       <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+        - {{bet.away_team.name}} {% if bet.is_a_tie %} <em>({{ bet.winner.name }})</em>{% endif %}</h6>
     </div>
 
     <div class="col-md-4">
-      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
-        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+      <h6>
+        {% if match.has_started %}
+          {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+          {{match.away_goals_normal_time}} - {{match.away_team.name}}
+          {% if match.is_a_tie %} <em>({{ match.get_winner.name }})</em>{% endif %}
+        {% else %}
+        Ainda nem começou.
+        {% endif %}
+      </h6>
     </div>
 
     <div class="col-md-4">
@@ -150,12 +177,19 @@
   <div class="row">
     <div class="col-md-4">
       <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+        - {{bet.away_team.name}} {% if bet.is_a_tie %} <em>({{ bet.winner.name }})</em>{% endif %}</h6>
     </div>
 
     <div class="col-md-4">
-      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
-        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+      <h6>
+        {% if match.has_started %}
+          Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+          {{match.away_goals_normal_time}} - {{match.away_team.name}}
+          {% if match.is_a_tie %} <em>({{ match.get_winner.name }})</em>{% endif %}
+        {% else %}
+        Ainda nem começou.
+        {% endif %}
+      </h6>
     </div>
 
     <div class="col-md-4">
@@ -171,12 +205,19 @@
   <div class="row gray">
     <div class="col-md-4">
       <h6>Jogo {{match.id}}: {{bet.home_team.name}} - {{bet.home_score}} X {{bet.away_score}}
-        - {{bet.away_team.name}} > {{ bet.winner.name }}</h6>
+        - {{bet.away_team.name}} {% if bet.is_a_tie %} <em>({{ bet.winner.name }})</em>{% endif %}</h6>
     </div>
 
     <div class="col-md-4">
-      <h6>Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
-        {{match.away_goals_normal_time}} - {{match.away_team.name}} > {{ match.get_winner.name }}</h6>
+      <h6>
+        {% if match.has_started %}
+          Jogo {{match.id}}: {{match.home_team.name}} - {{match.home_goals_normal_time}} X
+          {{match.away_goals_normal_time}} - {{match.away_team.name}}
+          {% if match.is_a_tie %} <em>({{ match.get_winner.name }})</em>{% endif %}
+        {% else %}
+        Ainda nem começou.
+        {% endif %}
+      </h6>
     </div>
 
     <div class="col-md-4">
