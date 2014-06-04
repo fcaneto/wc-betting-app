@@ -1,8 +1,9 @@
 (function () {
 
-  var app = angular.module('bolaoApp', ['ngCookies']);
+  var app = angular.module('bolaoApp', ['ngCookies', 'ngAnimate']);
 
-  app.controller('LeagueController', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
+  app.controller('LeagueController', ['$scope', '$http', '$cookies', '$timeout',
+    function ($scope, $http, $cookies, $timeout) {
     this.groups = groups;
     this.roundOf16 = roundOf16;
     this.quarterFinals = quarterFinals;
@@ -10,6 +11,8 @@
     this.finals = finals;
 
     $scope.isSaving = false;
+    $scope.showSuccessMsg = false;
+    $scope.showErrorMsg = false;
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
@@ -189,6 +192,8 @@
       addMatches(controller.semiFinals, data);
       addMatches(controller.finals, data);
 
+
+
       $scope.isSaving = true;
       $http.post(
           '/bet/',
@@ -197,12 +202,16 @@
           console.log(status);
           console.log(data);
           $scope.isSaving = false;
+          $scope.showSuccessMsg = true;
+          $timeout(function() {$scope.showSuccessMsg = false;}, 2000);
         }).
         error(function (data, status) {
           console.log('FAIL');
           console.log(status);
           console.log(data);
           $scope.isSaving = false;
+          $scope.showErrorMsg = true;
+          $timeout(function() {$scope.showErrorMsg = false;}, 2000);
         });
     }
   }]);
