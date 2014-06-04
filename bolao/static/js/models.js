@@ -92,7 +92,11 @@ function Group(name, teams, matches) {
       var homeScore = Number(match.homeScore);
       var awayScore = Number(match.awayScore);
 
-      if (homeScore !== null && awayScore !== null) {
+      if (match.homeScore !== null
+        && match.homeScore !== null
+        && match.homeScore !== ""
+        && match.homeScore !== "") {
+
         if (homeScore > awayScore)
           this.teams[match.homeTeam].points += 3;
         if (homeScore === awayScore) {
