@@ -25,19 +25,19 @@ function Group(name, teams, matches) {
       /*
        * CAIXCA.
        *
-       * CritÃ©rios de desempate:
+       * Criterios de desempate:
        * - pontos
        * - saldo de gols
-       * - gols prÃ³
+       * - gols pro
        *
        * Se dois ou mais times empatam nos critÃ©rios acima:
        * - confronto direto
        * - sorteio
        *
        * Se tieBreaker for:
-       * - negativo: team1 Ã© melhor
+       * - negativo: team1 é melhor
        * - zero: empate
-       * - positivo: team2 Ã© melhor
+       * - positivo: team2 é melhor
        *
        */
       var tieBreaker = -(team1.points - team2.points);
@@ -51,7 +51,7 @@ function Group(name, teams, matches) {
       }
 
       if (tieBreaker == 0) {
-        // Gols prÃ³
+        // Gols pro
         tieBreaker = -(team1.goalsMade - team2.goalsMade);
       }
 
@@ -60,11 +60,15 @@ function Group(name, teams, matches) {
         for (var i = 0; i < group.matches.length; i++) {
           var match = group.matches[i];
 
+          // TODO: input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed
+          var homeScore = Number(match.homeScore);
+          var awayScore = Number(match.awayScore);
+
           if (group.teams[match.homeTeam] === team1 && group.teams[match.awayTeam] === team2) {
-            tieBreaker = match.awayScore - match.homeScore;
+            tieBreaker = awayScore - homeScore;
             break;
           } else if (group.teams[match.homeTeam] === team2 && group.teams[match.awayTeam] === team1) {
-            tieBreaker = match.homeScore - match.awayScore;
+            tieBreaker = homeScore - awayScore;
             break;
           }
 
@@ -84,19 +88,19 @@ function Group(name, teams, matches) {
     for (var i = 0; i < this.matches.length; i++) {
       var match = this.matches[i];
 
-      if (match.homeScore !== null && match.awayScore !== null) {
-        if (match.homeScore > match.awayScore)
+      // TODO: input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed
+      var homeScore = Number(match.homeScore);
+      var awayScore = Number(match.awayScore);
+
+      if (homeScore !== null && awayScore !== null) {
+        if (homeScore > awayScore)
           this.teams[match.homeTeam].points += 3;
-        if (match.homeScore === match.awayScore) {
+        if (homeScore === awayScore) {
           this.teams[match.homeTeam].points += 1;
           this.teams[match.awayTeam].points += 1;
         }
-        if (match.homeScore < match.awayScore)
+        if (homeScore < awayScore)
           this.teams[match.awayTeam].points += 3;
-
-        // input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed
-        var homeScore = Number(match.homeScore);
-        var awayScore = Number(match.awayScore);
 
         this.teams[match.homeTeam].goalsMade += homeScore;
         this.teams[match.awayTeam].goalsTaken += homeScore;
@@ -110,9 +114,7 @@ function Group(name, teams, matches) {
 
     // Only fill qualified teams list if every game has been played
     if (everyGameHasBeenPlayed) {
-      console.log(this.getTeamsByRank());
       this.qualifiedTeams = this.getTeamsByRank().slice(0, 2);
-      console.log(this.qualifiedTeams);
     } else {
       this.qualifiedTeams = [];
     }
@@ -175,10 +177,13 @@ function SecondRoundMatch(id, homeTeamTarget, homeTeamFunction, awayTeamTarget, 
   }
 
   this.getWinner = function () {
-    if (this.homeScore === null || this.awayScore === null)
+    if (this.homeScore === null
+      || this.awayScore === null
+      || this.homeScore === ''
+      || this.awayScore === '')
       return null;
 
-    // input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed
+    // TODO: input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed
     var homeScore = Number(this.homeScore);
     var awayScore = Number(this.awayScore);
 
@@ -201,7 +206,11 @@ function SecondRoundMatch(id, homeTeamTarget, homeTeamFunction, awayTeamTarget, 
   }
 
   this.isNotTied = function () {
-    return this.homeScore !== this.awayScore
+    // TODO: input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed
+    var homeScore = Number(this.homeScore);
+    var awayScore = Number(this.awayScore);
+
+    return homeScore !== awayScore
       || this.homeScore === null
       || this.homeScore === ''
       || this.awayScore === null
