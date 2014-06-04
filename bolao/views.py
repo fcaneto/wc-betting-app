@@ -257,6 +257,7 @@ class Score:
         self.podium_scores = {}
 
         if Bet.query_all_bets(self.player).exists():
+            self.has_bet = True
             self.score_by_bets = self._compute_all_bets()
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
 
