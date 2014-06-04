@@ -68,7 +68,7 @@
       </ul>
 
       <button class="btn btn-success navbar-btn" ng-click="submit()"
-              ng-disabled="cup.finals.match64.getWinner() === null || cup.finals.match63.getWinner() === null || isSaving">
+              ng-disabled="disableSaveData() || isSaving">
         Salvar aposta
       </button>
 

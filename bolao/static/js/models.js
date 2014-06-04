@@ -183,8 +183,8 @@ function SecondRoundMatch(id, homeTeamTarget, homeTeamFunction, awayTeamTarget, 
   this.getWinner = function () {
     if (this.homeScore === null
       || this.awayScore === null
-      || this.homeScore === ''
-      || this.awayScore === '')
+      || this.homeScore === ""
+      || this.awayScore === "")
       return null;
 
     // TODO: input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed

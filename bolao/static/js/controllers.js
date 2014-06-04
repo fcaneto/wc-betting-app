@@ -20,6 +20,11 @@
 
     var controller = this;
 
+    $scope.disableSaveData = function() {
+      return controller.finals[63].getWinner() === null
+          || controller.finals[64].getWinner() === null;
+    }
+
     // TODO: refactor this mess.
     this.getTeamByCode = function (code) {
       var team = null;
