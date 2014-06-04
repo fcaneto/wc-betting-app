@@ -13,6 +13,7 @@ class PlayerInline(admin.StackedInline):
 # Define a new User admin
 class UserAdmin(UserAdmin):
     inlines = (PlayerInline, )
+    list_display = ('username', 'email', 'first_name', 'last_name', 'player')
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

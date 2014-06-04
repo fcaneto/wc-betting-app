@@ -29,14 +29,14 @@ body {
 
 .semiFinals {
   position: fixed;
-  top: 450px;
+  top: 430px;
   left: 530px;
   width: 300px;
 }
 
 .finals {
   position: fixed;
-  top: 450px;
+  top: 430px;
   left: 785px;
   width: 300px;
 }

@@ -6,7 +6,7 @@
   <title>Bolão</title>
 
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{STATIC_URL}}/css/style.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
 
   <style>
     .gray {
@@ -30,8 +30,8 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class=""><a href="/">Simulador</a></li>
-        <li class=""><a href="/bet/">Minha aposta</a></li>
+        <li class=""><a href="/sim">Simulador</a></li>
+        <li class=""><a href="/player/">Pontuação</a></li>
         <li class="active"><a href="/ranking/">Classificação</a></li>
       </ul>
 
@@ -48,7 +48,7 @@
   {% for score in scores %}
   <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
     <div class="col-md-3">
-      <h6>{{score.user.first_name}} {{score.user.last_name}}</h6>
+      <h6>{{score.player.user.first_name}} {{score.player.user.last_name}}</h6>
     </div>
 
     <div class="col-md-4">

@@ -79,9 +79,10 @@ function Group(name, teams, matches) {
   this.refreshStandings = function () {
     this.resetStandings();
 
+    var everyGameHasBeenPlayed = true;
+
     for (var i = 0; i < this.matches.length; i++) {
       var match = this.matches[i];
-      var everyGameHasBeenPlayed = true;
 
       if (match.homeScore !== null && match.awayScore !== null) {
         if (match.homeScore > match.awayScore)
@@ -129,6 +130,24 @@ function Group(name, teams, matches) {
       return this.qualifiedTeams[1];
     else
       return null;
+  }
+
+  this.setMatchResults = function(id, homeScore, awayScore) {
+    var match;
+    var found = false;
+
+    for (var i = 0; i < this.matches.length; i++) {
+      match = this.matches[i];
+
+      if (match.id === Number(id)) {
+        found = true;
+        match.homeScore = homeScore;
+        match.awayScore = awayScore;
+      }
+    }
+
+    if (!found)
+        console.log('Group > setMatchResults : id ' + id + ' not found.');
   }
 
 };

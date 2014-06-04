@@ -9,26 +9,138 @@
     this.semiFinals = semiFinals;
     this.finals = finals;
 
-    var cup = this;
+    $scope.isSaving = false;
 
-    $scope.refreshStandings = function (group) {
+    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
+    $http.defaults.headers.common['X-Access-Token'] = $cookies.token;
+
+    var controller = this;
+
+    // TODO: refactor this mess.
+    this.getTeamByCode = function (code) {
+      var team = null;
+      for (var group in controller.groups) {
+        var teams = controller.groups[group].teams;
+
+        for (var i = 0; i < teams.length; i++) {
+          if (teams[i].code === code)
+            team = teams[i];
+        }
+      }
+
+      if (!team)
+        console.log('LeagueController > getTeamByCode : team ' + code + ' not found!')
+      return team;
+    };
+
+    this.updateSecondRoundMatchFromServer = function (matchId, stage, homeScore, awayScore, winnerCode) {
+      console.log('Atualizando jogo ' + matchId);
+      var match = stage[matchId];
+      var team = controller.getTeamByCode(winnerCode);
+      match.setTiedMatchWinner(team);
+      match.homeScore = homeScore;
+      match.awayScore = awayScore;
+    }
+
+    var retrieveBets = function () {
+      $http.get(
+          '/bet/').
+        success(function (data, status) {
+          console.log(status);
+          console.log(data);
+
+          var groupFromServer;
+          var matchFromServer;
+          var group;
+          var matchId;
+
+          for (var groupId in data.groups) {
+            console.log('Atualizando ' + groupId);
+            group = controller.groups[groupId];
+            groupFromServer = data.groups[groupId];
+
+            for (matchId in groupFromServer) {
+              matchFromServer = groupFromServer[matchId];
+              group.setMatchResults(matchId,
+                matchFromServer.homeScore,
+                matchFromServer.awayScore);
+            }
+            controller.refreshStandings(group);
+          }
+
+          console.log('Atualizando Oitavas.');
+          for (matchId in data.roundOf16) {
+            matchFromServer = data.roundOf16[matchId];
+            controller.updateSecondRoundMatchFromServer(matchId,
+              controller.roundOf16,
+              matchFromServer.homeScore,
+              matchFromServer.awayScore,
+              matchFromServer.winnerCode);
+          }
+          controller.refreshFinals();
+
+          console.log('Atualizando Quartas.');
+          for (matchId in data.quarterFinals) {
+            matchFromServer = data.quarterFinals[matchId];
+            controller.updateSecondRoundMatchFromServer(matchId,
+              controller.quarterFinals,
+              matchFromServer.homeScore,
+              matchFromServer.awayScore,
+              matchFromServer.winnerCode);
+          }
+          controller.refreshFinals();
+
+          console.log('Atualizando Semi-finais.');
+          for (matchId in data.semiFinals) {
+            matchFromServer = data.semiFinals[matchId];
+            controller.updateSecondRoundMatchFromServer(matchId,
+              controller.semiFinals,
+              matchFromServer.homeScore,
+              matchFromServer.awayScore,
+              matchFromServer.winnerCode);
+          }
+          controller.refreshFinals();
+
+          console.log('Atualizando finais.');
+          for (matchId in data.finals) {
+            matchFromServer = data.finals[matchId];
+            controller.updateSecondRoundMatchFromServer(matchId,
+              controller.finals,
+              matchFromServer.homeScore,
+              matchFromServer.awayScore,
+              matchFromServer.winnerCode);
+          }
+          controller.refreshFinals();
+        }).
+        error(function (data, status) {
+          console.log('FAIL');
+          console.log(status);
+          console.log(data);
+        });
+    }
+    retrieveBets();
+
+    this.refreshStandings = function (group) {
       group.refreshStandings();
 
-      for (var match in cup.roundOf16) {
-        cup.roundOf16[match].refresh();
+      for (var match in controller.roundOf16) {
+        controller.roundOf16[match].refresh();
       }
     };
+    $scope.refreshStandings = this.refreshStandings;
 
-    $scope.refreshFinals = function () {
+    this.refreshFinals = function () {
       var match;
-      for (match in cup.quarterFinals)
-        cup.quarterFinals[match].refresh();
+      for (match in controller.quarterFinals)
+        controller.quarterFinals[match].refresh();
 
-      for (match in cup.semiFinals)
-        cup.semiFinals[match].refresh();
-      for (match in cup.finals)
-        cup.finals[match].refresh();
+      for (match in controller.semiFinals)
+        controller.semiFinals[match].refresh();
+      for (match in controller.finals)
+        controller.finals[match].refresh();
     };
+    $scope.refreshFinals = this.refreshFinals;
 
     $scope.setTiedMatchWinner = function (match, team) {
       match.setTiedMatchWinner(team);
@@ -36,66 +148,62 @@
     };
 
     $scope.submit = function () {
-      if (confirm("Está certo disso? Olha lá hein!")) {
+      var data = [];
+      var key = null;
+      var match = null;
 
-        var data = [];
-        var key = null;
-        var match = null;
+      for (key in controller.groups) {
+        var group = controller.groups[key];
+        for (var i = 0; i < group.matches.length; i++) {
+          match = group.matches[i];
 
-        for (key in cup.groups) {
-          var group = cup.groups[key];
-          for (var i = 0; i < group.matches.length; i++) {
-            match = group.matches[i];
+          // TODO: Zerando gols nulos para facilitar teste. Apague isso depois.
+          if (match.homeScore === null)
+            match.homeScore = 0;
+          if (match.awayScore === null)
+            match.awayScore = 0;
 
-            // TODO: Zerando gols nulos para facilitar teste. Apague isso depois.
-            if (match.homeScore === null)
-              match.homeScore = 0;
-            if (match.awayScore === null)
-              match.awayScore = 0;
+          match.homeTeamName = group.teams[match.homeTeam].name;
+          match.homeTeamCode = group.teams[match.homeTeam].code;
+          match.awayTeamName = group.teams[match.awayTeam].name;
+          match.awayTeamCode = group.teams[match.awayTeam].code;
 
-            match.homeTeamName = group.teams[match.homeTeam].name;
-            match.homeTeamCode = group.teams[match.homeTeam].code;
-            match.awayTeamName = group.teams[match.awayTeam].name;
-            match.awayTeamCode = group.teams[match.awayTeam].code;
-
-            data.push(match);
-          }
+          data.push(match);
         }
-
-        var addMatches = function (round, list) {
-          for (key in round) {
-            match = round[key];
-            match.homeTeamName = match.homeTeam.name;
-            match.homeTeamCode = match.homeTeam.code;
-            match.awayTeamName = match.awayTeam.name;
-            match.awayTeamCode = match.awayTeam.code;
-            match.winnerCode = match.getWinner().code;
-            list.push(match);
-          }
-        };
-
-        addMatches(cup.roundOf16, data);
-        addMatches(cup.quarterFinals, data);
-        addMatches(cup.semiFinals, data);
-        addMatches(cup.finals, data);
-
-        $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-        $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
-        $http.defaults.headers.common['X-Access-Token'] = $cookies.token;
-
-        $http.post(
-            '/bet/',
-            data).
-          success(function (data, status) {
-            console.log(status);
-            console.log(data);
-          }).
-          error(function (data, status) {
-            console.log('FAIL');
-            console.log(status);
-            console.log(data);
-          });
       }
+
+      var addMatches = function (round, list) {
+        for (key in round) {
+          match = round[key];
+          match.homeTeamName = match.homeTeam.name;
+          match.homeTeamCode = match.homeTeam.code;
+          match.awayTeamName = match.awayTeam.name;
+          match.awayTeamCode = match.awayTeam.code;
+          match.winnerCode = match.getWinner().code;
+          list.push(match);
+        }
+      };
+
+      addMatches(controller.roundOf16, data);
+      addMatches(controller.quarterFinals, data);
+      addMatches(controller.semiFinals, data);
+      addMatches(controller.finals, data);
+
+      $scope.isSaving = true;
+      $http.post(
+          '/bet/',
+          data).
+        success(function (data, status) {
+          console.log(status);
+          console.log(data);
+          $scope.isSaving = false;
+        }).
+        error(function (data, status) {
+          console.log('FAIL');
+          console.log(status);
+          console.log(data);
+          $scope.isSaving = false;
+        });
     }
   }]);
 
@@ -244,34 +352,34 @@
   var getSecond = groups.A.second;
 
   var roundOf16 = {
-    match49: new SecondRoundMatch(49, groups.A, getFirst, groups.B, getSecond),
-    match50: new SecondRoundMatch(50, groups.A, getSecond, groups.B, getFirst),
-    match51: new SecondRoundMatch(51, groups.C, getFirst, groups.D, getSecond),
-    match52: new SecondRoundMatch(52, groups.C, getSecond, groups.D, getFirst),
-    match53: new SecondRoundMatch(53, groups.E, getFirst, groups.F, getSecond),
-    match54: new SecondRoundMatch(54, groups.E, getSecond, groups.F, getFirst),
-    match55: new SecondRoundMatch(55, groups.G, getFirst, groups.H, getSecond),
-    match56: new SecondRoundMatch(56, groups.G, getSecond, groups.H, getFirst)
+    49: new SecondRoundMatch(49, groups.A, getFirst, groups.B, getSecond),
+    50: new SecondRoundMatch(50, groups.A, getSecond, groups.B, getFirst),
+    51: new SecondRoundMatch(51, groups.C, getFirst, groups.D, getSecond),
+    52: new SecondRoundMatch(52, groups.C, getSecond, groups.D, getFirst),
+    53: new SecondRoundMatch(53, groups.E, getFirst, groups.F, getSecond),
+    54: new SecondRoundMatch(54, groups.E, getSecond, groups.F, getFirst),
+    55: new SecondRoundMatch(55, groups.G, getFirst, groups.H, getSecond),
+    56: new SecondRoundMatch(56, groups.G, getSecond, groups.H, getFirst)
   };
 
-  var getWinner = roundOf16.match49.getWinner;
-  var getLoser = roundOf16.match49.getLoser;
+  var getWinner = roundOf16[49].getWinner;
+  var getLoser = roundOf16[49].getLoser;
 
   var quarterFinals = {
-    match57: new SecondRoundMatch(57, roundOf16.match49, getWinner, roundOf16.match50, getWinner),
-    match58: new SecondRoundMatch(58, roundOf16.match51, getWinner, roundOf16.match52, getWinner),
-    match59: new SecondRoundMatch(59, roundOf16.match53, getWinner, roundOf16.match54, getWinner),
-    match60: new SecondRoundMatch(60, roundOf16.match55, getWinner, roundOf16.match56, getWinner)
+    57: new SecondRoundMatch(57, roundOf16[49], getWinner, roundOf16[50], getWinner),
+    58: new SecondRoundMatch(58, roundOf16[51], getWinner, roundOf16[52], getWinner),
+    59: new SecondRoundMatch(59, roundOf16[53], getWinner, roundOf16[54], getWinner),
+    60: new SecondRoundMatch(60, roundOf16[55], getWinner, roundOf16[56], getWinner)
   };
 
   var semiFinals = {
-    match61: new SecondRoundMatch(61, quarterFinals.match57, getWinner, quarterFinals.match58, getWinner),
-    match62: new SecondRoundMatch(62, quarterFinals.match59, getWinner, quarterFinals.match60, getWinner)
+    61: new SecondRoundMatch(61, quarterFinals[57], getWinner, quarterFinals[58], getWinner),
+    62: new SecondRoundMatch(62, quarterFinals[59], getWinner, quarterFinals[60], getWinner)
   };
 
   var finals = {
-    match63: new SecondRoundMatch(63, semiFinals.match61, getLoser, semiFinals.match62, getLoser),
-    match64: new SecondRoundMatch(64, semiFinals.match61, getWinner, semiFinals.match62, getWinner)
+    63: new SecondRoundMatch(63, semiFinals[61], getLoser, semiFinals[62], getLoser),
+    64: new SecondRoundMatch(64, semiFinals[61], getWinner, semiFinals[62], getWinner)
   };
 
 })();

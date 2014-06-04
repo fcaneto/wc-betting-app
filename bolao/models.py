@@ -46,6 +46,9 @@ class Player(models.Model):
     user = models.OneToOneField(User)
     bet_room = models.ForeignKey(BetRoom)
 
+    def __unicode__(self):
+        return '%s' % self.bet_room
+
 
 class Group(models.Model):
     name = models.CharField(max_length=1, default="")
@@ -177,9 +180,9 @@ class Bet(TimestampedModel):
         return self.home_team if self.get_winner() == self.away_team else self.away_team
 
     @staticmethod
-    def query_all_bets(self, player):
+    def query_all_bets(player):
         return Bet.objects.filter(player=player)
 
     @staticmethod
-    def get_by_match_id(self, player, match_id):
+    def get_by_match_id(player, match_id):
         return Bet.objects.get(player=player, game__id=match_id)

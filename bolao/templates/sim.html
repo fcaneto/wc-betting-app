@@ -12,8 +12,14 @@
   <script src="{{STATIC_URL}}js/controllers.js"></script>
 
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{STATIC_URL}}/css/style.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
 
+  <style>
+    .navbar-img {
+      height: 20px;
+      margin-left: 10px;
+    }
+  </style>
 </head>
 
 <body>
@@ -28,13 +34,16 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Simulador</a></li>
-        <li class=""><a href="/bet/">Minha aposta</a></li>
+        <li class="active"><a href="/sim">Simulador</a></li>
+        <li class=""><a href="/player/">Pontuação</a></li>
         <li class=""><a href="ranking/">Classificação</a></li>
       </ul>
 
       <button class="btn btn-success navbar-btn" ng-click="submit()"
-        ng-disabled="cup.finals.match64.getWinner() === null || cup.finals.match63.getWinner() === null">Enviar aposta</button>
+        ng-disabled="cup.finals.match64.getWinner() === null || cup.finals.match63.getWinner() === null || isSaving">
+        Salvar aposta</button>
+
+      <img class="navbar-img" ng-show="isSaving" src="{{STATIC_URL}}img/saving.gif">
 
       <div class="navbar-nav navbar-right">
       <a href="/logout" class="btn navbar-btn">Sair</a>

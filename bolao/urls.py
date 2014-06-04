@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     url(r'^login/$', 'bolao.views.login', name='login'),
     url(r'^logout/$', 'bolao.views.logout', name='logout'),
     url(r'^bet/$', 'bolao.views.bet', name='bet'),
+    url(r'^sim/$', 'bolao.views.simulator', name='sim'),
+    url(r'^player/$', 'bolao.views.player', name='player'),
     url(r'^ranking/$', 'bolao.views.ranking', name='ranking'),
     url(r'^admin/', include(admin.site.urls)),
 )
