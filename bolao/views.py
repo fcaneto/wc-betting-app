@@ -17,6 +17,26 @@ from django.views.decorators.csrf import csrf_exempt
 from bolao.models import Game, Bet, Team, BetRoom, Group
 
 
+def signup(request):
+    if request.method == 'GET':
+        return render_to_response('signup.html', {}, RequestContext(request))
+    else:
+        username = request.POST['username']
+        password = request.POST['password']
+        password_check = request.POST['password_check']
+
+        if password != password_check:
+            render_to_response('signup.html', {'error':'Senha não bateu, digite de novo.'}, RequestContext(request))
+
+        user = User.objects.create_user(username=username, password=password)
+
+        #bet_room = request.POST['bet_room']
+        user = authenticate(username=username, password=password)
+        login_at_server(request, user)
+
+        HttpResponseRedirect(reverse('home'))
+
+
 @login_required(login_url='login')
 def home(request):
     if Bet.query_all_bets(request.user.player).exists():
@@ -42,17 +62,20 @@ def login(request):
             if user.is_active:
                 print 'User active'
                 login_at_server(request, user)
-
                 return HttpResponseRedirect('/')
             else:
-                return HttpResponse("Conta desabilitada.")
+                return render_to_response('login.html', {'errorMsg':'Conta desabilitada.'}, RequestContext(request))
         else:
             print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Login falhou.")
+            return render_to_response('login.html', {'errorMsg':'Usuário / senha inválidos.'}, RequestContext(request))
 
     else:
         return render_to_response('login.html', {}, RequestContext(request))
 
+
+@login_required(login_url='login')
+def rules(request):
+    return render_to_response('rules.html', {}, RequestContext(request))
 
 @login_required(login_url='login')
 def logout(request):
@@ -63,7 +86,7 @@ def logout(request):
 @login_required(login_url='login')
 def ranking(request):
     scores = []
-    for user in User.objects.all():
+    for user in User.objects.filter(player__bet_room=request.user.player.bet_room):
         scores.append(Score(user))
 
     sorted(scores, key=lambda score: score.total_score)

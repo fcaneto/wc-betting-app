@@ -5,7 +5,7 @@
 
   <title>Bolão</title>
 
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
   <style type="text/css">
     body {
@@ -30,7 +30,7 @@
 
     .form-signin .form-signin-heading,
     .form-signin .checkbox {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     .form-signin input[type="text"],
@@ -39,11 +39,6 @@
       height: auto;
       margin-bottom: 15px;
       padding: 7px 9px;
-    }
-
-    .form-signin button {
-      display: block;
-      margin-bottom: 10px;
     }
 
     .alert {
@@ -58,26 +53,28 @@
 
 <div class="container">
 
-  <form class="form-signin id=" login_form
-  " method="post" action="/login/">
+  <form class="form-signin id="login_form" method="post" action="/signup/">
   {% csrf_token %}
-  <h2 class="form-signin-heading">Bolão Caixíssimo</h2>
-  <h2 class="form-signin-heading">Copa 2014</h2>
-  <input type="text" name="username" class="input-block-level" placeholder="Usuário"/>
+  <h2 class="form-signin-heading">Cadastre-se:</h2>
+
+  <input type="text" class="form-control" name="username" class="input-block-level" placeholder="Usuário">
+
   <br/>
-  <input type="password" name="password" class="input-block-level" placeholder="Senha"/>
-  <br/>
+  <input type="password" name="password" class="form-control" placeholder="Senha" required/>
+  <input type="password" name="password_confirmation" class="form-control" placeholder="Confirme Senha" required/>
+  <br>
 
-  <button class="btn btn-large btn-primary" type="submit"
-  ">Entrar</button>
+      <h5>Você vai jogar em que bolão?</h5>
+      <input type="radio"><label>Djembos</label>
 
-  <!--<a href="/signup">Criar usuário</a>-->
 
-  </form>
 
-  {% if errorMsg %}
-  <div class="alert alert-danger">{{errorMsg}}</div>
-  {% endif %}
+<br/>
+
+<button class="btn btn-large btn-primary" type="submit">Cadastrar</button>
+</form>
+
+<div class="alert alert-danger">Mensagem do carai a 4</div>
 
 </div>
 

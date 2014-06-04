@@ -8,10 +8,11 @@ from django.contrib.auth.models import User
 class PlayerInline(admin.StackedInline):
     model = Player
     can_delete = False
-    verbose_name_plural = 'Player'
+    verbose_name_plural = 'Bolão'
 
 # Define a new User admin
 class UserAdmin(UserAdmin):
+    #exclude = ('groups', 'user_permissions')
     inlines = (PlayerInline, )
     list_display = ('username', 'email', 'first_name', 'last_name', 'player')
 
@@ -19,6 +20,7 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
 admin.site.register(Team)
+admin.site.register(Player)
 admin.site.register(Group)
 admin.site.register(Game)
 admin.site.register(Bet)

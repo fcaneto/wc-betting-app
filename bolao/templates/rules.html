@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" ng-app="bolaoApp">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bolão</title>
+
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+
+  <style>
+    .gray {
+      background-color: lightgray;
+    }
+
+    body {
+      margin-bottom: 20px;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <span class="navbar-brand" href="#">{{user.first_name}} {{user.last_name}}</span>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class=""><a href="/sim">Simulador</a></li>
+        <li class=""><a href="/player/">Pontuação</a></li>
+        <li class=""><a href="/ranking/">Classificação</a></li>
+        <li class="active"><a href="/rules/">Regulamento</a></li>
+      </ul>
+
+      <div class="navbar-nav navbar-right">
+        <a href="/logout" class="btn navbar-btn">Sair</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <h2>REGULAMENTO DO BOLÃO DA COPA DO MUNDO DE 2014</h2>
+
+  <h3>TAXA DE INSCRIÇÃO (POR CADA TABELA): R$ 50,00</h3>
+
+  <h3>PREMIAÇÃO:</h3>
+
+
+  <h5>Primeiro colocado – 60% do dinheiro arrecadado (Nº Apostadores x R$50,00)</h5>
+  <h5>Segundo colocado – 30% do dinheiro arrecadado (Nº Apostadores x R$50,00)</h5>
+  <h5>Terceiro colocado – 10% do dinheiro arrecadado (Nº Apostadores x R$50,00)</h5>
+  <h5>Quarto colocado - Não paga a taxa de inscrição</h5>
+  <h5>Ultimo colocado – Paga dobrado a taxa de inscrição</h5>
+
+  <h3>REGULAMENTO:</h3>
+
+  Só será válido, para a pontuação, o placar do tempo normal de jogo.
+  <br/>
+  A premiação será paga na primeira semana após a final da Copa.
+  <br/>
+
+  <h4>Pontuação (Primeira Fase)</h4>
+
+
+  Acertando o vencedor: + 3 pontos<br/>
+
+  Acertando o placar do ganhador: + 1,5 pontos<br/>
+
+  Acertando o placar do perdedor: + 1,5 pontos<br/>
+
+  Acertando o empate: + 4 pontos<br/>
+
+  Acertando o placar do empate: + 2 pontos<br/>
+
+  <h4>Pontuação (Oitavas-de-final)</h4>
+
+  Acertando as equipes do jogo: + 6 pontos por time<br/>
+
+  <h4>Pontuação (Quartas-de-final)</h4>
+
+  Acertando as equipes do jogo: + 8 pontos por time<br/>
+
+  <h4>Pontuação (Semi-final)</h4>
+
+  Acertando as equipes do jogo: + 10 pontos por time<br/>
+
+  <h4>Pontuação (Fase-final)</h4>
+
+  Acertando as equipes do jogo FINAL: + 12 pontos por time<br/>
+  Acertando as equipes do jogo 3o x 4o: + 6 pontos por time<br/>
+
+  Acertando o Campeão: + 15 pontos<br/>
+
+  Acertando o Vice-Campeão: + 10 pontos<br/>
+
+  Acertando o 3º Colocado: + 4 pontos<br/>
+
+  Acertando o 4º Colocado: + 3 pontos<br/>
+
+
+</div>
+
+</body>
+</html>
