@@ -1,16 +1,9 @@
 from django.conf.urls import patterns, include, url
-
 from django.contrib import admin
-
-from bolao.models import Team, Group, Game, Stadium, Bet
-from bolao.admin import GameModelAdmin
+from bolao.admin import UserAdmin
+from django.contrib.auth.models import User
 
 admin.autodiscover()
-admin.site.register(Team)
-admin.site.register(Group)
-admin.site.register(Game)
-admin.site.register(Stadium)
-admin.site.register(Bet)
 
 urlpatterns = patterns('',
     # Examples:
@@ -21,3 +14,5 @@ urlpatterns = patterns('',
     url(r'^ranking/$', 'bolao.views.ranking', name='ranking'),
     url(r'^admin/', include(admin.site.urls)),
 )
+
+

@@ -35,6 +35,17 @@ class TimestampedModel(models.Model):
 ---------- APP Models --------------------------------------------------------------------
 --------------------------------------------------------------------------------------------'''
 
+class BetRoom(models.Model):
+    name = models.CharField(max_length=30, default="")
+
+    def __unicode__(self):
+        return self.name
+
+
+class Player(models.Model):
+    user = models.OneToOneField(User)
+    bet_room = models.ForeignKey(BetRoom)
+
 
 class Group(models.Model):
     name = models.CharField(max_length=1, default="")
@@ -130,8 +141,9 @@ class Game(TimestampedModel):
         return self.status != Game.STATUS_NOT_STARTED
 
 class Bet(TimestampedModel):
-    player = models.ForeignKey(User)
-    game = models.ForeignKey('Game')
+    betRoom = models.ForeignKey(BetRoom, null=True)
+    player = models.ForeignKey(Player)
+    game = models.ForeignKey(Game)
     home_score = models.IntegerField(default=0)
     away_score = models.IntegerField(default=0)
 
@@ -163,3 +175,11 @@ class Bet(TimestampedModel):
 
     def get_loser(self):
         return self.home_team if self.get_winner() == self.away_team else self.away_team
+
+    @staticmethod
+    def query_all_bets(self, player):
+        return Bet.objects.filter(player=player)
+
+    @staticmethod
+    def get_by_match_id(self, player, match_id):
+        return Bet.objects.get(player=player, game__id=match_id)

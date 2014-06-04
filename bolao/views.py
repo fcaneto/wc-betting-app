@@ -13,12 +13,10 @@ from django.contrib.auth.decorators import login_required
 
 from django.views.decorators.csrf import csrf_exempt
 
-from bolao.models import Game, Bet, Team
-
+from bolao.models import Game, Bet, Team, BetRoom
 
 @login_required(login_url='login')
 def home(request):
-    print request.user
     return render_to_response('bolao.html', {}, RequestContext(request))
 
 
@@ -67,10 +65,9 @@ def ranking(request):
 def bet(request):
     if request.method == 'POST':
 
-        print request.user.first_name
         bets = json.loads(request.body)
 
-        Bet.objects.filter(player=request.user).delete()
+        Bet.query_all_bets(request.user.player).delete()
 
         for bet_dict in bets:
             id = bet_dict['id']
@@ -93,7 +90,7 @@ def bet(request):
             game = Game.objects.get(pk=id)
 
             bet = Bet(
-                player=request.user,
+                player=request.user.player,
                 game=game,
                 home_score=home_score,
                 away_score=away_score,
@@ -115,16 +112,19 @@ def bet(request):
         third_place = None
         final = None
 
-        if Bet.objects.filter(player=request.user).exists():
-            group_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.GROUP).order_by('game__id')
-            round_16_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.ROUND_OF_16).order_by(
+        player = request.user.player
+
+        if Bet.query_all_bets(player).exists():
+            group_bets = Bet.query_all_bets(player).filter(game__stage=Game.GROUP).order_by('game__id')
+            round_16_bets = Bet.query_all_bets(player).filter(game__stage=Game.ROUND_OF_16).order_by(
                 'game__id')
-            quarter_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.QUARTER_FINALS).order_by(
+            quarter_bets = Bet.query_all_bets(player).filter(game__stage=Game.QUARTER_FINALS).order_by(
                 'game__id')
-            semi_bets = Bet.objects.all().filter(player=request.user).filter(game__stage=Game.SEMI_FINALS).order_by(
+            semi_bets = Bet.query_all_bets(player).filter(game__stage=Game.SEMI_FINALS).order_by(
                 'game__id')
-            third_place = Bet.objects.get(game__id=63)
-            final = Bet.objects.get(game__id=64)
+
+            third_place = Bet.get_by_match_id(player, 63)
+            final = Bet.get_by_match_id(player, 64)
 
             # Adicionando estes atributo a cada bet para facilitar template
             for bet in group_bets:
@@ -158,17 +158,18 @@ class Score:
     """
     def __init__(self, user):
 
-        self.user = user
+        self.player = user.player
         self.score_by_bets = {}
         self.total_score = 0.0
         self.podium_scores = {}
 
-        if  Bet.objects.filter(player=self.user).exists():
+        if Bet.query_all_bets(self.player).exists():
             self.score_by_bets = self._compute_all_bets()
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
 
-            third_place = Bet.objects.get(game__id=63)
-            final = Bet.objects.get(game__id=64)
+            # TODO FUCK
+            third_place = Bet.get_by_match_id(self.player, 63)
+            final = Bet.get_by_match_id(self.player, 64)
 
             # pontos por acertar os quatro primeiros
             self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
@@ -198,7 +199,7 @@ class Score:
                     if bet.home_score == bet.game.home_goals_normal_time:
                         score += 2
             elif not bet.is_a_tie() and not bet.game.is_a_tie():
-                # jogador não apostou em empateo E não foi empate
+                # jogador não apostou em empate E não foi empate
                 if bet.home_score == bet.game.home_goals_normal_time:
                     score += 1.5
                 if bet.away_score == bet.game.away_goals_normal_time:
@@ -211,7 +212,7 @@ class Score:
     def _compute_all_bets(self):
         score_by_game = {}
 
-        for bet in Bet.objects.filter(player=self.user):
+        for bet in Bet.query_all_bets(self.player):
             bet_score = self._compute_bet_score(bet)
 
             # Extra points for secound round

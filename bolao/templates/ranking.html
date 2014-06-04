@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" ng-app="bolaoApp">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bolão</title>
+
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}/css/style.css">
+
+  <style>
+    .gray {
+      background-color: lightgray;
+    }
+
+    body {
+      margin-bottom: 20px;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <span class="navbar-brand" href="#">{{user.first_name}} {{user.last_name}}</span>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class=""><a href="/">Simulador</a></li>
+        <li class=""><a href="/bet/">Minha aposta</a></li>
+        <li class="active"><a href="/ranking/">Classificação</a></li>
+      </ul>
+
+      <div class="navbar-nav navbar-right">
+        <a href="/logout" class="btn navbar-btn">Sair</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  {% for score in scores %}
+  <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+    <div class="col-md-3">
+      <h6>{{score.user.first_name}} {{score.user.last_name}}</h6>
+    </div>
+
+    <div class="col-md-4">
+      <h6>{{score.total_score}}</h6>
+    </div>
+
+  </div>
+  {% endfor %}
+
+</div>
+
+</body>
+</html>
