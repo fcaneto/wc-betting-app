@@ -58,18 +58,16 @@
 
 <div class="container">
 
-  <form class="form-signin id=" login_form
-  " method="post" action="/login/">
+  <form class="form-signin id=" login_form" method="post" action="{% url 'login' %}">
   {% csrf_token %}
   <h2 class="form-signin-heading">Bolão Bêbado</h2>
-  <h2 class="form-signin-heading">2014</h2>
+  <h2 class="form-signin-heading">Copa 2014</h2>
   <input type="text" name="username" class="input-block-level" placeholder="Usuário"/>
   <br/>
   <input type="password" name="password" class="input-block-level" placeholder="Senha"/>
   <br/>
 
-  <button class="btn btn-large btn-primary" type="submit"
-  ">Entrar</button>
+  <button class="btn btn-large btn-primary" type="submit"">Entrar</button>
 
   <!--<a href="/signup">Criar usuário</a>-->
 

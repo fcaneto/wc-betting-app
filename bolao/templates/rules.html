@@ -1,50 +1,8 @@
-<!doctype html>
-<html lang="en" ng-app="bolaoApp">
-<head>
-  <meta charset="utf-8">
+{% extends "base.html" %}
 
-  <title>Bolão</title>
+{% block rulesActive %}active{% endblock %}
 
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
-
-  <style>
-    .gray {
-      background-color: lightgray;
-    }
-
-    body {
-      margin-bottom: 20px;
-    }
-
-  </style>
-
-</head>
-<body>
-
-<!-- Fixed navbar -->
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <span class="navbar-brand" href="#">{{user.username}}</span>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class=""><a href="/sim">Simulador</a></li>
-        <li class=""><a href="/player/">Pontuação</a></li>
-        <li class=""><a href="/ranking/">Classificação</a></li>
-        <li class="active"><a href="/rules/">Regulamento</a></li>
-      </ul>
-
-      <div class="navbar-nav navbar-right">
-        <a href="/logout" class="btn navbar-btn">Sair</a>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="container">
+{% block container %}
 
   <h2>REGULAMENTO DO BOLÃO DA COPA DO MUNDO DE 2014</h2>
 
@@ -105,7 +63,4 @@
   Acertando o 4º Colocado: + 3 pontos<br/>
 
 
-</div>
-
-</body>
-</html>
+{% endblock %}

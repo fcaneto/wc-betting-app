@@ -16,25 +16,24 @@ from django.views.decorators.csrf import csrf_exempt
 
 from bolao.models import Game, Bet, Team, BetRoom, Group
 
-
-def signup(request):
+@login_required(login_url='login')
+def change_password(request):
     if request.method == 'GET':
-        return render_to_response('signup.html', {}, RequestContext(request))
+        return render_to_response('change_password.html', {}, RequestContext(request))
     else:
-        username = request.POST['username']
-        password = request.POST['password']
-        password_check = request.POST['password_check']
+        print request.POST
+        password = request.POST.get('newPassword')
+        password_check = request.POST.get('passwordCheck')
 
-        if password != password_check:
-            render_to_response('signup.html', {'error':'Senha não bateu, digite de novo.'}, RequestContext(request))
+        print password
+        print password_check
 
-        user = User.objects.create_user(username=username, password=password)
-
-        #bet_room = request.POST['bet_room']
-        user = authenticate(username=username, password=password)
-        login_at_server(request, user)
-
-        HttpResponseRedirect(reverse('home'))
+        if password != password_check or password is None:
+            return render_to_response('change_password.html', {'error':'Senha não bateu, digite de novo.'}, RequestContext(request))
+        else:
+            request.user.set_password(password)
+            request.user.save()
+            return render_to_response('change_password_ok.html', {}, RequestContext(request))
 
 
 @login_required(login_url='login')
@@ -53,8 +52,8 @@ def simulator(request):
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         user = authenticate(username=username, password=password)
 

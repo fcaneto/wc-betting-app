@@ -1,12 +1,6 @@
-<!doctype html>
-<html lang="en" ng-app="bolaoApp">
-<head>
-  <meta charset="utf-8">
+{% extends "base.html" %}
 
-  <title>Bolão</title>
-
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+{% block head %}
 
   <style>
     .gray {
@@ -19,33 +13,11 @@
 
   </style>
 
-</head>
-<body>
+{% endblock %}
 
-<!-- Fixed navbar -->
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <span class="navbar-brand" href="#">{{user.username}}</span>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class=""><a href="/sim">Simulador</a></li>
-        <li class="active"><a href="/player/">Pontuação</a></li>
-        <li class=""><a href="/ranking/">Classificação</a></li>
-        <li class=""><a href="/rules/">Regulamento</a></li>
-      </ul>
+{% block playerActive %}active{% endblock %}
 
-      <div class="navbar-nav navbar-right">
-        <a href="/logout" class="btn navbar-btn">Sair</a>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="container">
-
+{% block container %}
   {% if group_bets %}
 
   <h3>Pontuação atual: {{ total_score }}</h3>
@@ -287,7 +259,4 @@
   <h4>Não fizesse nenhuma aposta ainda.</h4>
   {% endif %}
 
-</div>
-
-</body>
-</html>
+{% endblock %}

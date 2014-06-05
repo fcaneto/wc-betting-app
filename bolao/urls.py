@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'bolao.views.home', name='home'),
     url(r'^login/$', 'bolao.views.login', name='login'),
-    url(r'^signup/$', 'bolao.views.signup', name='signup'),
+    url(r'^password/$', 'bolao.views.change_password', name='change_password'),
     url(r'^logout/$', 'bolao.views.logout', name='logout'),
     url(r'^bet/$', 'bolao.views.bet', name='bet'),
     url(r'^sim/$', 'bolao.views.simulator', name='sim'),

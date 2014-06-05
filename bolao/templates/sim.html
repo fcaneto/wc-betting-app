@@ -80,9 +80,15 @@
       <label class="navbar-error-msg animate-show" ng-show="showErrorMsg">Salvou não! Disculpi, é bronca...</label>
 
 
-      <div class="navbar-nav navbar-right">
-        <a href="/logout" class="btn navbar-btn">Sair</a>
-      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="{% block changePasswordActive %}{% endblock %}">
+          <a href="{% url 'change_password' %}">
+            Trocar senha
+          </a>
+
+        <li class="">
+          <a href="/logout">Sair</a>
+        </li>
 
     </div>
   </div>

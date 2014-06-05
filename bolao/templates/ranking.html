@@ -1,13 +1,6 @@
-<!doctype html>
-<html lang="en" ng-app="bolaoApp">
-<head>
-  <meta charset="utf-8">
+{% extends "base.html" %}
 
-  <title>Bolão</title>
-
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
-
+{% block head %}
   <style>
     .gray {
       background-color: lightgray;
@@ -17,34 +10,21 @@
       margin-bottom: 20px;
     }
 
+    #changePasswordModal .modal-body {
+      height: 110px;
+    }
+
+    .modal-footer {
+      padding: 12px 20px 13px;
+    }
+
   </style>
 
-</head>
-<body>
+{% endblock %}
 
-<!-- Fixed navbar -->
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <span class="navbar-brand" href="#">{{user.username}}</span>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class=""><a href="/sim">Simulador</a></li>
-        <li class=""><a href="/player/">Pontuação</a></li>
-        <li class="active"><a href="/ranking/">Classificação</a></li>
-        <li class=""><a href="/rules/">Regulamento</a></li>
-      </ul>
+{% block rankingActive %}active{% endblock %}
 
-      <div class="navbar-nav navbar-right">
-        <a href="/logout" class="btn navbar-btn">Sair</a>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="container">
+{% block container %}
 
   {% for score in scores %}
   <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
@@ -65,7 +45,4 @@
   </div>
   {% endfor %}
 
-</div>
-
-</body>
-</html>
+{% endblock %}
