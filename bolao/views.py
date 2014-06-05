@@ -151,6 +151,7 @@ def bet(request):
 
         Bet.query_all_bets(request.user.player).delete()
 
+        bets_to_be_saved = []
         for bet_dict in bets:
             id = bet_dict['id']
             home_score = int(bet_dict['homeScore'])
@@ -179,15 +180,16 @@ def bet(request):
 
             game = games[id]
 
-            bet = Bet(
+            bets_to_be_saved.append(Bet(
                 player=request.user.player,
                 game=game,
                 home_score=home_score,
                 away_score=away_score,
                 home_team=home_team,
                 away_team=away_team,
-                winner=winner)
-            bet.save()
+                winner=winner))
+
+        Bet.objects.bulk_create(bets_to_be_saved)
 
         return HttpResponse()
 
