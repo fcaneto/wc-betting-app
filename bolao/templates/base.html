@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" ng-app="bolaoApp">
+<head>
+  <meta charset="utf-8">
+
+  <title>Bolão Bêbado</title>
+
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+
+  {% block head %}
+  {% endblock %}
+
+</head>
+<body>
+
+{% block openBody %}
+{% endblock openBody %}
+
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <span class="navbar-brand" href="#">{{user.username}}</span>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="{% block simActive %}{% endblock %}"><a href="{% url 'sim' %}">Simulador</a></li>
+        <li class="{% block playerActive %}{% endblock %}"><a href="{% url 'player' %}">Pontuação</a></li>
+        <li class="{% block rankingActive %}{% endblock %}"><a href="{% url 'ranking' %}">Classificação</a></li>
+        <li class="{% block rulesActive %}{% endblock %}"><a href="{% url 'rules' %}">Regulamento</a></li>
+      </ul>
+
+      {% block navbar %}
+      {% endblock navbar %}
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="{% block changePasswordActive %}{% endblock %}">
+          <a href="{% url 'change_password' %}">
+            Trocar senha
+          </a>
+
+        <li class="">
+          <a href="/logout">Sair</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+{% block container %}
+{% endblock %}
+
+</div>
+
+{% block closeBody %}
+{% endblock %}
+
+</body>
+</html>
