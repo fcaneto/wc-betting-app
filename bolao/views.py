@@ -21,12 +21,8 @@ def change_password(request):
     if request.method == 'GET':
         return render_to_response('change_password.html', {}, RequestContext(request))
     else:
-        print request.POST
         password = request.POST.get('newPassword')
         password_check = request.POST.get('passwordCheck')
-
-        print password
-        print password_check
 
         if password != password_check or password is None:
             return render_to_response('change_password.html', {'error':'Senha não bateu, digite de novo.'}, RequestContext(request))
@@ -59,13 +55,11 @@ def login(request):
 
         if user:
             if user.is_active:
-                print 'User active'
                 login_at_server(request, user)
                 return HttpResponseRedirect('/')
             else:
                 return render_to_response('login.html', {'errorMsg':'Conta desabilitada.'}, RequestContext(request))
         else:
-            print "Invalid login details: {0}, {1}".format(username, password)
             return render_to_response('login.html', {'errorMsg':'Usuário / senha inválidos.'}, RequestContext(request))
 
     else:
@@ -158,16 +152,24 @@ def bet(request):
             home_score = int(bet_dict['homeScore'])
             away_score = int(bet_dict['awayScore'])
 
-            home_team = None
-            away_team = None
+            teams = {}
             winner = None
             try:
                 code = bet_dict['homeTeamCode']
-                home_team = Team.objects.get(code=code)
+                if code not in teams:
+                    teams[code] = Team.objects.get(code=code)
+                home_team = teams[code]
+
                 code = bet_dict['awayTeamCode']
-                away_team = Team.objects.get(code=code)
+                if code not in teams:
+                    teams[code] = Team.objects.get(code=code)
+                away_team = teams[code]
+
                 code = bet_dict['winnerCode']
-                winner = Team.objects.get(code=code)
+                if code not in teams:
+                    teams[code] = Team.objects.get(code=code)
+                winner = teams[code]
+                
             except KeyError:
                 print 'Not a second round match'
 
