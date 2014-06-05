@@ -145,6 +145,10 @@ def bet(request):
 
         bets = json.loads(request.body)
 
+        games = {}
+        for game in Game.objects.all():
+            games[game.id] = game
+
         Bet.query_all_bets(request.user.player).delete()
 
         for bet_dict in bets:
@@ -169,11 +173,11 @@ def bet(request):
                 if code not in teams:
                     teams[code] = Team.objects.get(code=code)
                 winner = teams[code]
-                
+
             except KeyError:
                 print 'Not a second round match'
 
-            game = Game.objects.get(pk=id)
+            game = games[id]
 
             bet = Bet(
                 player=request.user.player,
