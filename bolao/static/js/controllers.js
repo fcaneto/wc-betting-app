@@ -367,12 +367,12 @@
 
   var roundOf16 = {
     49: new SecondRoundMatch(49, groups.A, getFirst, groups.B, getSecond),
-    50: new SecondRoundMatch(51, groups.B, getFirst, groups.A, getSecond),
-    51: new SecondRoundMatch(50, groups.C, getFirst, groups.D, getSecond),
+    51: new SecondRoundMatch(51, groups.B, getFirst, groups.A, getSecond),
+    50: new SecondRoundMatch(50, groups.C, getFirst, groups.D, getSecond),
     52: new SecondRoundMatch(52, groups.D, getFirst, groups.C, getSecond),
     53: new SecondRoundMatch(53, groups.E, getFirst, groups.F, getSecond),
-    54: new SecondRoundMatch(55, groups.F, getFirst, groups.E, getSecond),
-    55: new SecondRoundMatch(54, groups.G, getFirst, groups.H, getSecond),
+    55: new SecondRoundMatch(55, groups.F, getFirst, groups.E, getSecond),
+    54: new SecondRoundMatch(54, groups.G, getFirst, groups.H, getSecond),
     56: new SecondRoundMatch(56, groups.H, getFirst, groups.G, getSecond)
   };
 
@@ -381,8 +381,8 @@
 
   var quarterFinals = {
     57: new SecondRoundMatch(57, roundOf16[49], getWinner, roundOf16[50], getWinner),
-    58: new SecondRoundMatch(59, roundOf16[51], getWinner, roundOf16[52], getWinner),
-    59: new SecondRoundMatch(58, roundOf16[53], getWinner, roundOf16[54], getWinner),
+    59: new SecondRoundMatch(59, roundOf16[51], getWinner, roundOf16[52], getWinner),
+    58: new SecondRoundMatch(58, roundOf16[53], getWinner, roundOf16[54], getWinner),
     60: new SecondRoundMatch(60, roundOf16[55], getWinner, roundOf16[56], getWinner)
   };
 
