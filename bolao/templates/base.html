@@ -26,7 +26,11 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+      {% if bet_room.is_open_to_betting %}
         <li class="{% block simActive %}{% endblock %}"><a href="{% url 'sim' %}">Simulador</a></li>
+      {% else %}
+        <li class="{% block gamesActive %}{% endblock %}"><a href="{% url 'games' %}">Apostas</a></li>
+      {% endif %}
         <li class="{% block playerActive %}{% endblock %}"><a href="{% url 'player' %}">Pontuação</a></li>
         <li class="{% block rankingActive %}{% endblock %}"><a href="{% url 'ranking' %}">Classificação</a></li>
         <li class="{% block rulesActive %}{% endblock %}"><a href="{% url 'rules' %}">Regulamento</a></li>

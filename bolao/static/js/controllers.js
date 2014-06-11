@@ -4,222 +4,248 @@
 
   app.controller('LeagueController', ['$scope', '$http', '$cookies', '$timeout',
     function ($scope, $http, $cookies, $timeout) {
-    this.groups = groups;
-    this.roundOf16 = roundOf16;
-    this.quarterFinals = quarterFinals;
-    this.semiFinals = semiFinals;
-    this.finals = finals;
+      this.groups = groups;
+      this.roundOf16 = roundOf16;
+      this.quarterFinals = quarterFinals;
+      this.semiFinals = semiFinals;
+      this.finals = finals;
 
-    $scope.isSaving = false;
-    $scope.showSuccessMsg = false;
-    $scope.showErrorMsg = false;
+      $scope.isSaving = false;
+      $scope.showSuccessMsg = false;
+      $scope.showErrorMsg = false;
 
-    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-    $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
-    $http.defaults.headers.common['X-Access-Token'] = $cookies.token;
+      $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+      $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
+      $http.defaults.headers.common['X-Access-Token'] = $cookies.token;
 
-    var controller = this;
+      var controller = this;
 
-    $scope.disableSaveData = function() {
-      return controller.finals[63].getWinner() === null
+      $scope.disableSaveData = function () {
+        return controller.finals[63].getWinner() === null
           || controller.finals[64].getWinner() === null;
-    }
-
-    // TODO: refactor this mess.
-    this.getTeamByCode = function (code) {
-      var team = null;
-      for (var group in controller.groups) {
-        var teams = controller.groups[group].teams;
-
-        for (var i = 0; i < teams.length; i++) {
-          if (teams[i].code === code)
-            team = teams[i];
-        }
       }
 
-      if (!team)
-        console.log('LeagueController > getTeamByCode : team ' + code + ' not found!')
-      return team;
-    };
+      // TODO: refactor this mess.
+      this.getTeamByCode = function (code) {
+        var team = null;
+        for (var group in controller.groups) {
+          var teams = controller.groups[group].teams;
 
-    this.updateSecondRoundMatchFromServer = function (matchId, stage, homeScore, awayScore, winnerCode) {
-      console.log('Atualizando jogo ' + matchId);
-      var match = stage[matchId];
-      var team = controller.getTeamByCode(winnerCode);
-      match.setTiedMatchWinner(team);
-      match.homeScore = homeScore;
-      match.awayScore = awayScore;
-    }
-
-    var retrieveBets = function () {
-      $http.get(
-          '/bet/').
-        success(function (data, status) {
-          console.log(status);
-          console.log(data);
-
-          var groupFromServer;
-          var matchFromServer;
-          var group;
-          var matchId;
-
-          for (var groupId in data.groups) {
-            console.log('Atualizando ' + groupId);
-            group = controller.groups[groupId];
-            groupFromServer = data.groups[groupId];
-
-            for (matchId in groupFromServer) {
-              matchFromServer = groupFromServer[matchId];
-              group.setMatchResults(matchId,
-                matchFromServer.homeScore,
-                matchFromServer.awayScore);
-            }
-            controller.refreshStandings(group);
+          for (var i = 0; i < teams.length; i++) {
+            if (teams[i].code === code)
+              team = teams[i];
           }
-
-          console.log('Atualizando Oitavas.');
-          for (matchId in data.roundOf16) {
-            matchFromServer = data.roundOf16[matchId];
-            controller.updateSecondRoundMatchFromServer(matchId,
-              controller.roundOf16,
-              matchFromServer.homeScore,
-              matchFromServer.awayScore,
-              matchFromServer.winnerCode);
-          }
-          controller.refreshFinals();
-
-          console.log('Atualizando Quartas.');
-          for (matchId in data.quarterFinals) {
-            matchFromServer = data.quarterFinals[matchId];
-            controller.updateSecondRoundMatchFromServer(matchId,
-              controller.quarterFinals,
-              matchFromServer.homeScore,
-              matchFromServer.awayScore,
-              matchFromServer.winnerCode);
-          }
-          controller.refreshFinals();
-
-          console.log('Atualizando Semi-finais.');
-          for (matchId in data.semiFinals) {
-            matchFromServer = data.semiFinals[matchId];
-            controller.updateSecondRoundMatchFromServer(matchId,
-              controller.semiFinals,
-              matchFromServer.homeScore,
-              matchFromServer.awayScore,
-              matchFromServer.winnerCode);
-          }
-          controller.refreshFinals();
-
-          console.log('Atualizando finais.');
-          for (matchId in data.finals) {
-            matchFromServer = data.finals[matchId];
-            controller.updateSecondRoundMatchFromServer(matchId,
-              controller.finals,
-              matchFromServer.homeScore,
-              matchFromServer.awayScore,
-              matchFromServer.winnerCode);
-          }
-          controller.refreshFinals();
-        }).
-        error(function (data, status) {
-          console.log('FAIL');
-          console.log(status);
-          console.log(data);
-        });
-    }
-    retrieveBets();
-
-    this.refreshStandings = function (group) {
-      group.refreshStandings();
-
-      for (var match in controller.roundOf16) {
-        controller.roundOf16[match].refresh();
-      }
-    };
-    $scope.refreshStandings = this.refreshStandings;
-
-    this.refreshFinals = function () {
-      var match;
-      for (match in controller.quarterFinals)
-        controller.quarterFinals[match].refresh();
-
-      for (match in controller.semiFinals)
-        controller.semiFinals[match].refresh();
-      for (match in controller.finals)
-        controller.finals[match].refresh();
-    };
-    $scope.refreshFinals = this.refreshFinals;
-
-    $scope.setTiedMatchWinner = function (match, team) {
-      match.setTiedMatchWinner(team);
-      this.refreshFinals();
-    };
-
-    $scope.submit = function () {
-      var data = [];
-      var key = null;
-      var match = null;
-
-      for (key in controller.groups) {
-        var group = controller.groups[key];
-        for (var i = 0; i < group.matches.length; i++) {
-          match = group.matches[i];
-
-          // TODO: Zerando gols nulos para facilitar teste. Apague isso depois.
-          if (match.homeScore === null)
-            match.homeScore = 0;
-          if (match.awayScore === null)
-            match.awayScore = 0;
-
-          match.homeTeamName = group.teams[match.homeTeam].name;
-          match.homeTeamCode = group.teams[match.homeTeam].code;
-          match.awayTeamName = group.teams[match.awayTeam].name;
-          match.awayTeamCode = group.teams[match.awayTeam].code;
-
-          data.push(match);
         }
-      }
 
-      var addMatches = function (round, list) {
-        for (key in round) {
-          match = round[key];
-          match.homeTeamName = match.homeTeam.name;
-          match.homeTeamCode = match.homeTeam.code;
-          match.awayTeamName = match.awayTeam.name;
-          match.awayTeamCode = match.awayTeam.code;
-          match.winnerCode = match.getWinner().code;
-          list.push(match);
-        }
+        if (!team)
+          console.log('LeagueController > getTeamByCode : team ' + code + ' not found!')
+        return team;
       };
 
-      addMatches(controller.roundOf16, data);
-      addMatches(controller.quarterFinals, data);
-      addMatches(controller.semiFinals, data);
-      addMatches(controller.finals, data);
+      this.updateSecondRoundMatchFromServer = function (matchId, stage, homeScore, awayScore, winnerCode) {
+        console.log('Atualizando jogo ' + matchId);
+        var match = stage[matchId];
+        var team = controller.getTeamByCode(winnerCode);
+        match.setTiedMatchWinner(team);
+        match.homeScore = homeScore;
+        match.awayScore = awayScore;
+      }
+
+      this.retrieveBets = function (userId, userName) {
+        console.log('retrieve! ' + userId);
+        var url = "";
+        if (typeof userId === 'undefined') {
+          url = '/bet/';
+          userName = 'Você';
+        } else {
+          url = '/bet/user/' + userId;
+        }
+        $scope.isRetrieving = true;
+        $scope.currentUserName = "";
+        $http.get(
+            url).
+          success(function (data, status) {
+            refreshBetFromServer(data);
+            $scope.isRetrieving = false;
+            $scope.currentUserName = userName;
+          }).
+          error(function (data, status) {
+            console.log('FAIL');
+            console.log(status);
+            console.log(data);
+            $scope.isRetrieving = false;
+          });
+      }
+      this.retrieveBets();
+      $scope.retrieveBets = this.retrieveBets;
+      $scope.currentUserName = 'Você';
+      $scope.isRetrieving = false;
+
+      var refreshBetFromServer = function (data) {
+        console.log(status);
+        console.log(data);
+
+        var groupFromServer;
+        var matchFromServer;
+        var group;
+        var matchId;
+
+        for (var groupId in data.groups) {
+          console.log('Atualizando ' + groupId);
+          group = controller.groups[groupId];
+          groupFromServer = data.groups[groupId];
+
+          for (matchId in groupFromServer) {
+            matchFromServer = groupFromServer[matchId];
+            group.setMatchResults(matchId,
+              matchFromServer.homeScore,
+              matchFromServer.awayScore);
+          }
+          controller.refreshStandings(group);
+        }
+
+        console.log('Atualizando Oitavas.');
+        for (matchId in data.roundOf16) {
+          matchFromServer = data.roundOf16[matchId];
+          controller.updateSecondRoundMatchFromServer(matchId,
+            controller.roundOf16,
+            matchFromServer.homeScore,
+            matchFromServer.awayScore,
+            matchFromServer.winnerCode);
+        }
+        controller.refreshFinals();
+
+        console.log('Atualizando Quartas.');
+        for (matchId in data.quarterFinals) {
+          matchFromServer = data.quarterFinals[matchId];
+          controller.updateSecondRoundMatchFromServer(matchId,
+            controller.quarterFinals,
+            matchFromServer.homeScore,
+            matchFromServer.awayScore,
+            matchFromServer.winnerCode);
+        }
+        controller.refreshFinals();
+
+        console.log('Atualizando Semi-finais.');
+        for (matchId in data.semiFinals) {
+          matchFromServer = data.semiFinals[matchId];
+          controller.updateSecondRoundMatchFromServer(matchId,
+            controller.semiFinals,
+            matchFromServer.homeScore,
+            matchFromServer.awayScore,
+            matchFromServer.winnerCode);
+        }
+        controller.refreshFinals();
+
+        console.log('Atualizando finais.');
+        for (matchId in data.finals) {
+          matchFromServer = data.finals[matchId];
+          controller.updateSecondRoundMatchFromServer(matchId,
+            controller.finals,
+            matchFromServer.homeScore,
+            matchFromServer.awayScore,
+            matchFromServer.winnerCode);
+        }
+        controller.refreshFinals();
+
+      }
+
+      this.refreshStandings = function (group) {
+        group.refreshStandings();
+
+        for (var match in controller.roundOf16) {
+          controller.roundOf16[match].refresh();
+        }
+      };
+      $scope.refreshStandings = this.refreshStandings;
+
+      this.refreshFinals = function () {
+        var match;
+        for (match in controller.quarterFinals)
+          controller.quarterFinals[match].refresh();
+
+        for (match in controller.semiFinals)
+          controller.semiFinals[match].refresh();
+        for (match in controller.finals)
+          controller.finals[match].refresh();
+      };
+      $scope.refreshFinals = this.refreshFinals;
+
+      $scope.setTiedMatchWinner = function (match, team) {
+        match.setTiedMatchWinner(team);
+        this.refreshFinals();
+      };
+
+      $scope.submit = function () {
+        var data = [];
+        var key = null;
+        var match = null;
+
+        for (key in controller.groups) {
+          var group = controller.groups[key];
+          for (var i = 0; i < group.matches.length; i++) {
+            match = group.matches[i];
+
+            // TODO: Zerando gols nulos para facilitar teste. Apague isso depois.
+            if (match.homeScore === null)
+              match.homeScore = 0;
+            if (match.awayScore === null)
+              match.awayScore = 0;
+
+            match.homeTeamName = group.teams[match.homeTeam].name;
+            match.homeTeamCode = group.teams[match.homeTeam].code;
+            match.awayTeamName = group.teams[match.awayTeam].name;
+            match.awayTeamCode = group.teams[match.awayTeam].code;
+
+            data.push(match);
+          }
+        }
+
+        var addMatches = function (round, list) {
+          for (key in round) {
+            match = round[key];
+            match.homeTeamName = match.homeTeam.name;
+            match.homeTeamCode = match.homeTeam.code;
+            match.awayTeamName = match.awayTeam.name;
+            match.awayTeamCode = match.awayTeam.code;
+            match.winnerCode = match.getWinner().code;
+            list.push(match);
+          }
+        };
+
+        addMatches(controller.roundOf16, data);
+        addMatches(controller.quarterFinals, data);
+        addMatches(controller.semiFinals, data);
+        addMatches(controller.finals, data);
 
 
-
-      $scope.isSaving = true;
-      $http.post(
-          '/bet/',
-          data).
-        success(function (data, status) {
-          console.log(status);
-          console.log(data);
-          $scope.isSaving = false;
-          $scope.showSuccessMsg = true;
-          $timeout(function() {$scope.showSuccessMsg = false;}, 2000);
-        }).
-        error(function (data, status) {
-          console.log('FAIL');
-          console.log(status);
-          console.log(data);
-          $scope.isSaving = false;
-          $scope.showErrorMsg = true;
-          $timeout(function() {$scope.showErrorMsg = false;}, 2000);
-        });
+        $scope.isSaving = true;
+        $http.post(
+            '/bet/',
+            data).
+          success(function (data, status) {
+            console.log(status);
+            console.log(data);
+            $scope.isSaving = false;
+            $scope.showSuccessMsg = true;
+            $timeout(function () {
+              $scope.showSuccessMsg = false;
+            }, 2000);
+          }).
+          error(function (data, status) {
+            console.log('FAIL');
+            console.log(status);
+            console.log(data);
+            $scope.isSaving = false;
+            $scope.showErrorMsg = true;
+            $timeout(function () {
+              $scope.showErrorMsg = false;
+            }, 2000);
+          });
+      }
     }
-  }]);
+  ])
+  ;
 
   var groups = {
     A: new Group(

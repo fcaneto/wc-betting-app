@@ -1,19 +1,13 @@
-<!doctype html>
-<html lang="en" ng-app="bolaoApp">
-<head>
-  <meta charset="utf-8">
+{% extends "base.html" %}
 
-  <title>Bolão</title>
+{% block head %}
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-cookies.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js"></script>
-  <script src="{{STATIC_URL}}js/models.js"></script>
-  <script src="{{STATIC_URL}}js/controllers.js"></script>
-
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+  <script src="{{ STATIC_URL }}js/models.js"></script>
+  <script src="{{ STATIC_URL }}js/controllers.js"></script>
 
   <style>
     .navbar-img {
@@ -37,8 +31,8 @@
       opacity: 1;
     }
 
-    .animate-show.ng-hide-add{
-      display:inline!important;
+    .animate-show.ng-hide-add {
+      display: inline !important;
     }
 
     .animate-show.ng-hide {
@@ -47,55 +41,33 @@
 
 
   </style>
-</head>
-
-<body>
-
-<div ng-controller="LeagueController as cup">
-
-<!-- Fixed navbar -->
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <span class="navbar-brand" href="#">{{user.username}}</span>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/sim/">Simulador</a></li>
-        <li class=""><a href="/player/">Pontuação</a></li>
-        <li class=""><a href="/ranking/">Classificação</a></li>
-        <li class=""><a href="/rules/">Regulamento</a></li>
-      </ul>
-
-      <button class="btn btn-success navbar-btn" ng-click="submit()"
-              ng-disabled="disableSaveData() || isSaving">
-        Salvar aposta
-      </button>
-
-      <img class="navbar-img" ng-show="isSaving" src="{{STATIC_URL}}img/saving.gif">
-
-      <label class="navbar-success-msg animate-show" ng-show="showSuccessMsg">
-        Oh yeah baby! Tá salva a aposta!</label>
-
-      <label class="navbar-error-msg animate-show" ng-show="showErrorMsg">Salvou não! Disculpi, é bronca...</label>
+{% endblock %}
 
 
-      <ul class="nav navbar-nav navbar-right">
-        <li class="{% block changePasswordActive %}{% endblock %}">
-          <a href="{% url 'change_password' %}">
-            Trocar senha
-          </a>
+{% block openBody %}
+  <div ng-controller="LeagueController as cup">
+{% endblock %}
 
-        <li class="">
-          <a href="/logout">Sair</a>
-        </li>
+{% block simActive %}active{% endblock %}
 
-    </div>
-  </div>
-</div>
+{% block navbar %}
+  <button class="btn btn-success navbar-btn" ng-click="submit()"
+          ng-disabled="disableSaveData() || isSaving">
+    Salvar aposta
+  </button>
 
-{% verbatim %}
-<div class="container-fluid">
+  <img class="navbar-img" ng-show="isSaving" src="{{ STATIC_URL }}img/saving.gif">
+
+  <label class="navbar-success-msg animate-show" ng-show="showSuccessMsg">
+    Oh yeah baby! Tá salva a aposta!</label>
+
+  <label class="navbar-error-msg animate-show" ng-show="showErrorMsg">Salvou não! Disculpi, é bronca...</label>
+
+{% endblock %}
+
+
+{% block container %}
+  {% verbatim %}
 
   <div class="groups">
 
@@ -270,9 +242,10 @@
     </div>
   </div>
 
-</div>
-</div>
-{% endverbatim %}
+  </div>
+  {% endverbatim %}
+{% endblock %}
 
-</body>
-</html>
+{% block closeBody %}
+  </div>
+{% endblock %}

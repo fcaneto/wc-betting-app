@@ -26,23 +26,27 @@
 
 {% block container %}
 
-  {% for score in scores %}
-  <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-    <div class="col-md-3">
-      <h6>{{score.player.user.first_name}} {{score.player.user.last_name}}</h6>
-    </div>
+  {% for stats in stats_list %}
+    {% with stats.score as score %}
+      <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+        <div class="col-md-3">
+          <h6>{{ score.player.user.first_name }} {{ score.player.user.last_name }}</h6>
+        </div>
 
-    <div class="col-md-1">
-      <h6>{{score.total_score}}</h6>
-    </div>
+        <div class="col-md-1">
+          <h6>{{ score.total_score }}</h6>
+        </div>
 
-    <div class="col-md-4">
-      {% if score.has_bet %}
-      <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Já registrou aposta.</h6>
-      {% endif %}
-    </div>
+        {% if bet_room.is_open_to_betting %}
+        <div class="col-md-4">
+          {% if score.has_bet %}
+            <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Já registrou aposta.</h6>
+          {% endif %}
+        </div>
+        {% endif %}
 
-  </div>
+      </div>
+    {% endwith %}
   {% endfor %}
 
 {% endblock %}

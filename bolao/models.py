@@ -35,8 +35,10 @@ class TimestampedModel(models.Model):
 ---------- APP Models --------------------------------------------------------------------
 --------------------------------------------------------------------------------------------'''
 
+
 class BetRoom(models.Model):
     name = models.CharField(max_length=30, default="")
+    is_open_to_betting = models.BooleanField(default=True, verbose_name="Apostas abertas?")
 
     def __unicode__(self):
         return self.name
@@ -113,8 +115,8 @@ class Game(TimestampedModel):
     )
     stage = models.CharField(max_length=2, choices=STAGE_CHOICES, default=GROUP)
 
-    home_goals_normal_time = models.IntegerField(default=0)
-    away_goals_normal_time = models.IntegerField(default=0)
+    home_goals_normal_time = models.IntegerField(default=0, verbose_name=u'Placar mandante (tempo normal)')
+    away_goals_normal_time = models.IntegerField(default=0, verbose_name=u'Placar visitante (tempo normal)')
 
     home_goals_extra_time = models.IntegerField(null=True, default=0)
     away_goals_extra_time = models.IntegerField(null=True, default=0)
@@ -123,7 +125,8 @@ class Game(TimestampedModel):
     home_goals_penalties = models.IntegerField(null=True, default=0)
     away_goals_penalties = models.IntegerField(null=True, default=0)
 
-    winner = models.ForeignKey(Team, null=True, blank=True)
+    winner = models.ForeignKey(Team, null=True, blank=True, verbose_name=u'Vencedor (empate em tempo normal)')
+    date_time = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         return "[%s] %s X %s" % (self.id, self.home_team, self.away_team)
@@ -142,6 +145,10 @@ class Game(TimestampedModel):
 
     def has_started(self):
         return self.status != Game.STATUS_NOT_STARTED
+
+    @staticmethod
+    def get_next_game():
+        return Game.objects.all()[0]
 
 class Bet(TimestampedModel):
     betRoom = models.ForeignKey(BetRoom, null=True)

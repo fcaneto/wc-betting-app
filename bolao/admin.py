@@ -15,6 +15,7 @@ class UserAdmin(UserAdmin):
     #exclude = ('groups', 'user_permissions')
     inlines = (PlayerInline, )
     list_display = ('username', 'email', 'first_name', 'last_name', 'player')
+    list_filter = ('player__bet_room',)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

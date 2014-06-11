@@ -184,7 +184,9 @@ function SecondRoundMatch(id, homeTeamTarget, homeTeamFunction, awayTeamTarget, 
     if (this.homeScore === null
       || this.awayScore === null
       || this.homeScore === ""
-      || this.awayScore === "")
+      || this.awayScore === ""
+      || this.homeTeam === null
+      || this.awayTeam === null)
       return null;
 
     // TODO: input don't have type=number (cause of chrome/safari spinner bug), so conversion is needed

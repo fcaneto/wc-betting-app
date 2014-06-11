@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from bolao.models import Game, Bet, Team, BetRoom, Group
 
+
 @login_required(login_url='login')
 def change_password(request):
     if request.method == 'GET':
@@ -25,7 +26,8 @@ def change_password(request):
         password_check = request.POST.get('passwordCheck')
 
         if password != password_check or password is None:
-            return render_to_response('change_password.html', {'error':'Senha não bateu, digite de novo.'}, RequestContext(request))
+            return render_to_response('change_password.html', {'error': 'Senha não bateu, digite de novo.'},
+                                      RequestContext(request))
         else:
             request.user.set_password(password)
             request.user.save()
@@ -43,7 +45,22 @@ def home(request):
 
 @login_required(login_url='login')
 def simulator(request):
-    return render_to_response('sim.html', {}, RequestContext(request))
+    if not request.user.player.bet_room.is_open_to_betting:
+        return HttpResponse("Hacker safado, tentando entrar direto com a URL. O bolão já foi fechado para edição.")
+    else:
+        return render_to_response('sim.html', {'bet_room': request.user.player.bet_room}, RequestContext(request))
+
+
+@login_required(login_url='login')
+def games(request):
+    if request.user.player.bet_room.is_open_to_betting:
+        return HttpResponse("Hacker safado, tentando entrar direto com a URL. O bolão ainda está aberto para edição.")
+    else:
+        users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id)
+        return render_to_response('games.html',
+                                  {'me': request.user,
+                                   'users': users},
+                                  RequestContext(request))
 
 
 def login(request):
@@ -58,9 +75,9 @@ def login(request):
                 login_at_server(request, user)
                 return HttpResponseRedirect('/')
             else:
-                return render_to_response('login.html', {'errorMsg':'Conta desabilitada.'}, RequestContext(request))
+                return render_to_response('login.html', {'errorMsg': 'Conta desabilitada.'}, RequestContext(request))
         else:
-            return render_to_response('login.html', {'errorMsg':'Usuário / senha inválidos.'}, RequestContext(request))
+            return render_to_response('login.html', {'errorMsg': 'Usuário / senha inválidos.'}, RequestContext(request))
 
     else:
         return render_to_response('login.html', {}, RequestContext(request))
@@ -68,7 +85,8 @@ def login(request):
 
 @login_required(login_url='login')
 def rules(request):
-    return render_to_response('rules.html', {}, RequestContext(request))
+    return render_to_response('rules.html', {'bet_room': request.user.player.bet_room}, RequestContext(request))
+
 
 @login_required(login_url='login')
 def logout(request):
@@ -84,8 +102,20 @@ def ranking(request):
 
     sorted(scores, key=lambda score: score.total_score)
 
+    stats_list = []
+    next_game = Game.get_next_game()
+    for score in scores:
+        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
+        next_bet = None
+        if len(next_bet_query) > 0:
+            next_bet = next_bet_query[0]
+
+        stats_list.append({'score': score, 'next_bet': next_bet})
+
     return render_to_response('ranking.html',
-                              {'scores': scores,
+                              {'bet_room': request.user.player.bet_room,
+                               'stats_list': stats_list,
+                               'next_game': next_game,
                                'me': request.user.player},
                               RequestContext(request))
 
@@ -128,7 +158,8 @@ def player(request):
         final.player_score = score.get_bet_score(final.game.id)
 
     return render_to_response('player.html',
-                              {'group_bets': group_bets,
+                              {'bet_room': request.user.player.bet_room,
+                               'group_bets': group_bets,
                                'round_16_bets': round_16_bets,
                                'quarter_bets': quarter_bets,
                                'semi_bets': semi_bets,
@@ -137,6 +168,16 @@ def player(request):
                                'total_score': score.total_score,
                                'podium_scores': score.podium_scores},
                               RequestContext(request))
+
+
+####################
+# Bet Ajax API
+####################
+@login_required(login_url='login')
+def bet_from_user(request, user_id):
+    if request.method == 'GET':
+        user = User.objects.get(pk=user_id)
+        return render_bets(user)
 
 
 @login_required(login_url='login')
@@ -194,59 +235,63 @@ def bet(request):
         return HttpResponse()
 
     elif request.method == 'GET':
-        response_data = {
-            'groups': {'A': {},
-                       'B': {},
-                       'C': {},
-                       'D': {},
-                       'E': {},
-                       'F': {},
-                       'G': {},
-                       'H': {}},
-            'roundOf16': {},
-            'quarterFinals': {},
-            'semiFinals': {},
-            'finals': {}
-        }
-
-        for bet in Bet.query_all_bets(request.user.player).filter(game__stage=Game.GROUP):
-            match_data = {'homeScore': bet.home_score,
-                          'awayScore': bet.away_score}
-            group = bet.game.home_team.group.name
-            response_data['groups'][group][bet.game.id] = match_data
-
-        for bet in Bet.query_all_bets(request.user.player).filter(game__stage=Game.ROUND_OF_16):
-            match_data = {'id': bet.game.id,
-                          'homeScore': bet.home_score,
-                          'awayScore': bet.away_score,
-                          'winnerCode': bet.get_winner().code}
-            response_data['roundOf16'][bet.game.id] = match_data
-
-        for bet in Bet.query_all_bets(request.user.player).filter(game__stage=Game.QUARTER_FINALS):
-            match_data = {'id': bet.game.id,
-                          'homeScore': bet.home_score,
-                          'awayScore': bet.away_score,
-                          'winnerCode': bet.get_winner().code}
-            response_data['quarterFinals'][bet.game.id] = match_data
-
-        for bet in Bet.query_all_bets(request.user.player).filter(game__stage=Game.SEMI_FINALS):
-            match_data = {'id': bet.game.id,
-                          'homeScore': bet.home_score,
-                          'awayScore': bet.away_score,
-                          'winnerCode': bet.get_winner().code}
-            response_data['semiFinals'][bet.game.id] = match_data
-
-        for bet in Bet.query_all_bets(request.user.player).filter(game__stage=Game.FINALS):
-            match_data = {'id': bet.game.id,
-                          'homeScore': bet.home_score,
-                          'awayScore': bet.away_score,
-                          'winnerCode': bet.get_winner().code}
-            response_data['finals'][bet.game.id] = match_data
-
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        return render_bets(request.user)
 
     else:
         return HttpResponse(code=401)
+
+
+def render_bets(user):
+    response_data = {
+        'groups': {'A': {},
+                   'B': {},
+                   'C': {},
+                   'D': {},
+                   'E': {},
+                   'F': {},
+                   'G': {},
+                   'H': {}},
+        'roundOf16': {},
+        'quarterFinals': {},
+        'semiFinals': {},
+        'finals': {}
+    }
+
+    for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.GROUP):
+        match_data = {'homeScore': bet.home_score,
+                      'awayScore': bet.away_score}
+        group = bet.game.home_team.group.name
+        response_data['groups'][group][bet.game.id] = match_data
+
+    for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.ROUND_OF_16):
+        match_data = {'id': bet.game.id,
+                      'homeScore': bet.home_score,
+                      'awayScore': bet.away_score,
+                      'winnerCode': bet.get_winner().code}
+        response_data['roundOf16'][bet.game.id] = match_data
+
+    for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.QUARTER_FINALS):
+        match_data = {'id': bet.game.id,
+                      'homeScore': bet.home_score,
+                      'awayScore': bet.away_score,
+                      'winnerCode': bet.get_winner().code}
+        response_data['quarterFinals'][bet.game.id] = match_data
+
+    for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.SEMI_FINALS):
+        match_data = {'id': bet.game.id,
+                      'homeScore': bet.home_score,
+                      'awayScore': bet.away_score,
+                      'winnerCode': bet.get_winner().code}
+        response_data['semiFinals'][bet.game.id] = match_data
+
+    for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.FINALS):
+        match_data = {'id': bet.game.id,
+                      'homeScore': bet.home_score,
+                      'awayScore': bet.away_score,
+                      'winnerCode': bet.get_winner().code}
+        response_data['finals'][bet.game.id] = match_data
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 class Score:

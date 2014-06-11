@@ -18,26 +18,26 @@ body {
 .roundOf16 {
   position: fixed;
   top: 70px;
-  left: 530px;
+  left: 590px;
 }
 
 .quarterFinals {
   position: fixed;
   top: 70px;
-  left: 785px;
+  left: 845px;
 }
 
 .semiFinals {
   position: fixed;
   top: 430px;
-  left: 530px;
+  left: 590px;
   width: 300px;
 }
 
 .finals {
   position: fixed;
   top: 430px;
-  left: 785px;
+  left: 845px;
   width: 300px;
 }
 
