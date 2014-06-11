@@ -37,13 +37,13 @@
           <h6>{{ score.total_score }}</h6>
         </div>
 
-        {% if bet_room.is_open_to_betting %}
+{#        {% if bet_room.is_open_to_betting %}#}
         <div class="col-md-4">
           {% if score.has_bet %}
             <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Já registrou aposta.</h6>
           {% endif %}
         </div>
-        {% endif %}
+{#        {% endif %}#}
 
       </div>
     {% endwith %}
