@@ -36,10 +36,11 @@ def change_password(request):
 
 @login_required(login_url='login')
 def home(request):
-    if Bet.query_all_bets(request.user.player).exists():
-        url = reverse('player')
-    else:
+    if request.user.player.bet_room.is_open_to_betting:
         url = reverse('sim')
+    else:
+        url = reverse('player')
+
     return HttpResponseRedirect(url)
 
 
