@@ -101,7 +101,7 @@ def logout(request):
 @login_required(login_url='login')
 def ranking(request):
     scores = []
-    for user in User.objects.filter(player__bet_room=request.user.player.bet_room):
+    for user in User.objects.filter(player__bet_room=request.user.player.bet_room).order_by('first_name'):
         scores.append(Score(user))
 
     sorted(scores, key=lambda score: score.total_score)
@@ -111,7 +111,7 @@ def ranking(request):
     next_game_bets = []
     for score in scores:
 
-        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player).order_by('player__user__first_name')
+        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
         if score.player == request.user.player:
             my_bet = next_bet_query[0]
         else:
