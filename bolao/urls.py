@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^player/$', 'bolao.views.player', name='player'),
     url(r'^games/$', 'bolao.views.games', name='games'),
     url(r'^ranking/$', 'bolao.views.ranking', name='ranking'),
+    url(r'^rivals/$', 'bolao.views.rivals', name='rivals'),
     url(r'^admin/', include(admin.site.urls)),
 )
 

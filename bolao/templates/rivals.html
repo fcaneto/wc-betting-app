@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    body {
+      margin-bottom: 20px;
+    }
+  </style>
+
+{% endblock %}
+
+{% block rivalsActive %}active{% endblock %}
+
+{% block container %}
+
+  <div class="row">
+
+    <div class="col-md-4">
+      <h4>Jogador</h4>
+    </div>
+
+    <div class="col-md-4">
+      <h4>Rival</h4>
+    </div>
+
+    <div class="col-md-4">
+      <h4>Similaridade</h4>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h5>Você</h5>
+    </div>
+
+    <div class="col-md-4">
+      <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}</h5>
+    </div>
+
+    <div class="col-md-4">
+      <h5><em>{{ me.player.rival_correlation }}</em></h5>
+    </div>
+  </div>
+
+  {% for user in others %}
+    <div class="row">
+
+    <div class="col-md-4">
+      <h5>{{ user.first_name }} {{ user.last_name }}</h5>
+    </div>
+
+    <div class="col-md-4">
+      <h5>{{ user.player.rival.user.first_name }} {{ user.player.rival.user.last_name }}</h5>
+    </div>
+
+    <div class="col-md-4">
+      <h5><em>{{ user.player.rival_correlation }}</em></h5>
+    </div>
+  </div>
+
+  {% endfor %}
+
+{% endblock %}
