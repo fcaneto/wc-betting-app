@@ -42,7 +42,7 @@ def home(request):
     if request.user.player.bet_room.is_open_to_betting:
         url = reverse('sim')
     else:
-        url = reverse('player')
+        url = reverse('ranking')
 
     return HttpResponseRedirect(url)
 
