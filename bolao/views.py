@@ -26,12 +26,15 @@ def change_password(request):
         password_check = request.POST.get('passwordCheck')
 
         if password != password_check or password is None:
-            return render_to_response('change_password.html', {'error': 'Senha não bateu, digite de novo.'},
+            return render_to_response('change_password.html',
+                                      {'bet_room': request.user.player.bet_room,
+                                       'error': 'Senha não bateu, digite de novo.'},
                                       RequestContext(request))
         else:
             request.user.set_password(password)
             request.user.save()
-            return render_to_response('change_password_ok.html', {}, RequestContext(request))
+            return render_to_response('change_password_ok.html', {'bet_room': request.user.player.bet_room},
+                                      RequestContext(request))
 
 
 @login_required(login_url='login')
