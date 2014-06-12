@@ -28,62 +28,63 @@
 
   <div class="row">
 
+    <div class="col-md-5">
+      <h3>Prox. jogo:</h3>
+      <h4>Jogo {{ next_game.id }}: {{ next_game.home_team.name }} X {{ next_game.away_team.name }} - Qui, 12/06 às
+        17:00</h4>
+
+
+      <h3>As apostas foram:</h3>
+
+      <div class="row gray">
+        <div class="col-md-9 col-xs-7">
+          <h5>Você</h5>
+        </div>
+        <div class="col-md-3 col-xs-5">
+          <h6>{{ my_bet.home_score }} x {{ my_bet.away_score }}</h6>
+        </div>
+      </div>
+
+      {% for bet in next_game_bets %}
+        <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+          <div class="col-md-9 col-xs-7">
+            <h6>{{ bet.player.user.first_name }} {{ bet.player.user.last_name }}</h6>
+          </div>
+          <div class="col-md-3 col-xs-5">
+            <h6>{{ bet.home_score }} x {{ bet.away_score }}</h6>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-1"></div>
+
     <div class="col-md-6">
       {% if not bet_room.is_open_to_betting %}
         <h3>Principal rival: </h3>
         <h5>{{ me.player.rival.user.first_name }} ({{ me.player.rival_correlation }} similar)</h5>
       {% endif %}
 
-    <h3>Classificação: </h3>
+      <h3>Classificação: </h3>
       {% for score in scores %}
-          <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-
-            <div class="col-md-7">
-              <h6>{{ score.player.user.first_name }} {{ score.player.user.last_name }}</h6>
-            </div>
-
-            <div class="col-md-2">
-              <h6>{{ score.total_score }}</h6>
-            </div>
-
-            <div class="col-md-2">
-              {% if score.has_bet %}
-                <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Apostou!</h6>
-              {% endif %}
-            </div>
-
-          </div>
-      {% endfor %}
-    </div>
-
-    <div class="col-md-1"></div>
-
-    <div class="col-md-5">
-      <h3>Prox. jogo:</h3>
-        <h4>Jogo {{ next_game.id }}: {{ next_game.home_team.name }} X {{ next_game.away_team.name }} - Qui, 12/06 às 17:00</h4>
-
-
-        <h3>As apostas foram:</h3>
-
-        <div class="row gray">
-          <div class="col-md-9">
-            <h5>Você</h5>
-          </div>
-          <div class="col-md-3">
-            <h6>{{ my_bet.home_score }} x {{ my_bet.away_score }}</h6>
-          </div>
-        </div>
-
-        {% for bet in next_game_bets %}
         <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-          <div class="col-md-9">
-            <h6>{{ bet.player.user.first_name }} {{ bet.player.user.last_name }}</h6>
+
+          <div class="col-md-7 col-xs-7">
+            <h6>{{ score.player.user.first_name }} {{ score.player.user.last_name }}</h6>
           </div>
-          <div class="col-md-3">
-            <h6>{{ bet.home_score }} x {{ bet.away_score }}</h6>
+
+          <div class="col-md-2 col-xs-2">
+            <h6>{{ score.total_score }}</h6>
           </div>
+
+          <div class="col-md-2 col-xs-2">
+            {% if score.has_bet %}
+              <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Apostou!</h6>
+            {% endif %}
+          </div>
+
         </div>
-        {% endfor %}
+      {% endfor %}
     </div>
 
   </div>

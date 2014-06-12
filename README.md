@@ -2,9 +2,13 @@ TODO:
 
 - testar pontuação
 
-- calcular correlação (quantos resultados iguais, quantos times passando iguais)
+- ranking: quem tá acertado de total verde, quem tá parcial de verde menor
+- trocar apostou por resultado no ultimo jogo
+- posições
 
-- bet do prox jogo
+[ok] - calcular correlação (quantos resultados iguais, quantos times passando iguais)
+
+[ok] - bet do prox jogo
 
 - versão da classificação pra celular
 
