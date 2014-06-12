@@ -20,7 +20,7 @@ from bolao.models import Game, Bet, Team, BetRoom, Group
 @login_required(login_url='login')
 def change_password(request):
     if request.method == 'GET':
-        return render_to_response('change_password.html', {}, RequestContext(request))
+        return render_to_response('change_password.html', {'bet_room': request.user.player.bet_room}, RequestContext(request))
     else:
         password = request.POST.get('newPassword')
         password_check = request.POST.get('passwordCheck')
