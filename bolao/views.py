@@ -131,7 +131,7 @@ def rivals(request):
     if request.user.player.bet_room.is_open_to_betting:
         return HttpResponse("Hacker safado, tentando entrar direto com a URL. O bolão ainda está aberto para edição.")
     else:
-        users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id)
+        users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id).order_by('first_name')
         return render_to_response('rivals.html',
                                   {'me': request.user,
                                    'others': users},
