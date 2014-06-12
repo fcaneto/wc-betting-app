@@ -6,6 +6,8 @@ TODO:
 
 - bet do prox jogo
 
-- tela de update do jogo atual pra admins
+- versão da classificação pra celular
+
+- tela de update do jogo atual pra admins (pra celular)
 
 

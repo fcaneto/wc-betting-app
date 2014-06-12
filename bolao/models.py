@@ -48,6 +48,8 @@ class Player(models.Model):
     user = models.OneToOneField(User)
     bet_room = models.ForeignKey(BetRoom)
 
+
+
     def __unicode__(self):
         return '%s' % self.bet_room
 
