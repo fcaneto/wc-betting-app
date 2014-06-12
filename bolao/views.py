@@ -111,7 +111,7 @@ def ranking(request):
     next_game_bets = []
     for score in scores:
 
-        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
+        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player).order_by('player__user__first_name')
         if score.player == request.user.player:
             my_bet = next_bet_query[0]
         else:
