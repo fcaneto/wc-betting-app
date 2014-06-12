@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_at_server
 from django.contrib.auth import logout as logout_at_server
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
@@ -106,21 +106,25 @@ def ranking(request):
 
     sorted(scores, key=lambda score: score.total_score)
 
-    stats_list = []
-    next_game = Game.get_next_game()
-    for score in scores:
-        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
-        next_bet = None
-        if len(next_bet_query) > 0:
-            next_bet = next_bet_query[0]
 
-        stats_list.append({'score': score, 'next_bet': next_bet})
+    next_game = Game.objects.get(pk=1) #Game.get_next_game()
+    next_game_bets = []
+    for score in scores:
+
+        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
+        if score.player == request.user.player:
+            my_bet = next_bet_query[0]
+        else:
+            if len(next_bet_query) > 0:
+                next_game_bets.append(next_bet_query[0])
 
     return render_to_response('ranking.html',
                               {'bet_room': request.user.player.bet_room,
-                               'stats_list': stats_list,
+                               'scores': scores,
+                               'my_bet': my_bet,
                                'next_game': next_game,
-                               'me': request.user.player},
+                               'next_game_bets': next_game_bets,
+                               'me': request.user},
                               RequestContext(request))
 
 
@@ -187,6 +191,9 @@ def bet_from_user(request, user_id):
 @login_required(login_url='login')
 def bet(request):
     if request.method == 'POST':
+
+        if not request.user.player.bet_room.is_open_to_betting:
+            return HttpResponseForbidden()
 
         bets = json.loads(request.body)
 
@@ -350,12 +357,13 @@ class Score:
                     score += 2
             elif not bet.is_a_tie() and not bet.game.is_a_tie():
                 # jogador não apostou em empate E não foi empate
-                if bet.home_score == bet.game.home_goals_normal_time:
-                    score += 1.5
-                if bet.away_score == bet.game.away_goals_normal_time:
-                    score += 1.5
                 if bet.get_winner() == bet.game.get_winner():
                     score += 3
+                    if bet.home_score == bet.game.home_goals_normal_time:
+                        score += 1.5
+                    if bet.away_score == bet.game.away_goals_normal_time:
+                        score += 1.5
+
 
         return score
 

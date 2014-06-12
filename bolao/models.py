@@ -17,7 +17,7 @@ class TimestampedModel(models.Model):
     class Meta:
         abstract = True
 
-    changed_timestamp = models.DateTimeField(default=datetime.datetime.now, verbose_name=u'Horário')
+    changed_timestamp = models.DateTimeField(default=datetime.datetime.now, verbose_name=u'Última modificação')
     deleted = models.BooleanField(verbose_name=u'Apagado', default=False)
 
     def save(self, update_ts=True, *args, **kwargs):
@@ -48,10 +48,11 @@ class Player(models.Model):
     user = models.OneToOneField(User)
     bet_room = models.ForeignKey(BetRoom)
 
-
+    rival = models.ForeignKey('Player', null=True)
+    rival_correlation = models.CharField(max_length=10, null=True)
 
     def __unicode__(self):
-        return '%s' % self.bet_room
+        return '%s @ %s' % (self.user.first_name, self.bet_room)
 
 
 class Group(models.Model):
@@ -91,7 +92,7 @@ class Game(TimestampedModel):
                                   related_query_name='away_game', null=True, default=None)
 
     #stadium = models.ForeignKey('Stadium', null=True)
-    #date_time = models.DateTimeField(null=True, blank=True)
+    start_date_time = models.DateTimeField(null=True, blank=True, verbose_name=u'Data e hora de início')
 
     STATUS_NOT_STARTED = 'NS'
     STATUS_HAPPENING = 'H'
@@ -128,7 +129,6 @@ class Game(TimestampedModel):
     away_goals_penalties = models.IntegerField(null=True, default=0)
 
     winner = models.ForeignKey(Team, null=True, blank=True, verbose_name=u'Vencedor (empate em tempo normal)')
-    date_time = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         return "[%s] %s X %s" % (self.id, self.home_team, self.away_team)

@@ -18,7 +18,8 @@
     }
 
     .navbar-nav li label {
-      padding-top: 15px;
+      padding-top: 18px;
+      font-size: 12px
     }
 
     .dropdown-menu > li > a {
@@ -50,8 +51,9 @@
         </li>
         {% for user in users %}
           <li role="presentation">
-            <a role="menuitem" tabindex="-1" href="#" ng-click="retrieveBets({{ user.id }}, '{{ user.first_name }}')">
-              {{ user.first_name }}
+            <a role="menuitem" tabindex="-1" href="#"
+               ng-click="retrieveBets({{ user.id }}, '{{ user.first_name }} {{ user.last_name }}')">
+              {{ user.first_name }} {{ user.last_name }}
             </a>
           </li>
         {% endfor %}
