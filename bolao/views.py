@@ -104,7 +104,7 @@ def ranking(request):
     for user in User.objects.filter(player__bet_room=request.user.player.bet_room).order_by('first_name'):
         scores.append(Score(user))
 
-    sorted(scores, key=lambda score: score.total_score)
+    scores.sort(key=lambda score: score.total_score, reverse=True)
 
     next_game = Game.objects.get(pk=2) #Game.get_next_game()
     next_game_bets = []
@@ -320,6 +320,8 @@ class Score:
     score_by_bets = dicionário (id do jogo) -> score
     podium_scores = dicionario pontos extras do podium (posicao) -> score
     """
+    def __str__(self):
+        return str(self.total_score)
 
     def __init__(self, user):
 
