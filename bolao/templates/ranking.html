@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{#{% load filters %}#}
 
 {% block head %}
   <style>
@@ -33,7 +34,7 @@
         {% if next_game.status == 'H' %}
           Jogando agora:
         {% else %}
-          Prox. jogo: Sex, 13/06 às 16:00
+          Prox. jogo: {{ next_game.get_start_date_time }}
         {% endif %}
       </h4>
 

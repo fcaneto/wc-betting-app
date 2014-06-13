@@ -106,7 +106,7 @@ def ranking(request):
 
     scores.sort(key=lambda score: score.total_score, reverse=True)
 
-    next_game = Game.objects.get(pk=3) #Game.get_next_game()
+    next_game = Game.objects.get(id=3) #Game.get_next_game()
     next_game_bets = []
 
     for score in scores:

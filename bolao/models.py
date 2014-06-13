@@ -94,6 +94,13 @@ class Game(TimestampedModel):
     #stadium = models.ForeignKey('Stadium', null=True)
     start_date_time = models.DateTimeField(null=True, blank=True, verbose_name=u'Data e hora de início')
 
+    def get_start_date_time(self):
+        date_time = self.start_date_time
+        if date_time:
+            return "%s/%s às %s:%s" % (date_time.day, date_time.month, date_time.hour, date_time.minute)
+        else:
+            return 'None'
+
     STATUS_NOT_STARTED = 'NS'
     STATUS_HAPPENING = 'H'
     STATUS_FINISHED = 'F'
@@ -151,6 +158,8 @@ class Game(TimestampedModel):
     @staticmethod
     def get_next_game():
         not_started_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).order_by('start_date_time')
+        print not_started_games[0]
+        print not_started_games[1]
         if not_started_games:
             return not_started_games[0]
         else:
