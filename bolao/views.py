@@ -106,10 +106,13 @@ def ranking(request):
 
     scores.sort(key=lambda score: score.total_score, reverse=True)
 
-    next_game = Game.objects.get(pk=2) #Game.get_next_game()
+    next_game = Game.objects.get(pk=3) #Game.get_next_game()
     next_game_bets = []
 
     for score in scores:
+        """
+        score variation is from current game being played OR last game played
+        """
         score.set_game_for_variation(next_game)
 
         next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
