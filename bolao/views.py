@@ -108,7 +108,9 @@ def ranking(request):
 
     next_game = Game.objects.get(pk=2) #Game.get_next_game()
     next_game_bets = []
+
     for score in scores:
+        score.set_game_for_variation(next_game)
 
         next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
         if score.player == request.user.player:
@@ -320,15 +322,13 @@ class Score:
     score_by_bets = dicionário (id do jogo) -> score
     podium_scores = dicionario pontos extras do podium (posicao) -> score
     """
-    def __str__(self):
-        return str(self.total_score)
-
     def __init__(self, user):
 
         self.player = user.player
         self.score_by_bets = {}
         self.total_score = 0.0
         self.podium_scores = {}
+        self.variation_game_id = 0
 
         if Bet.query_all_bets(self.player).exists():
             self.has_bet = True
@@ -353,6 +353,13 @@ class Score:
             if final.get_winner() == final.game.get_winner():
                 self.podium_scores[1] = 15
                 self.total_score += 15
+
+    def set_game_for_variation(self, game):
+        self.variation_game_id = game.id
+
+    def variation(self):
+        print '%s > %s' % (self.variation_game_id, self.score_by_bets[self.variation_game_id])
+        return self.score_by_bets[self.variation_game_id]
 
     def get_bet_score(self, match_id):
         return self.score_by_bets.get(match_id, 0.0)

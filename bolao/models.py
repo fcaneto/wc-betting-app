@@ -150,7 +150,23 @@ class Game(TimestampedModel):
 
     @staticmethod
     def get_next_game():
-        return Game.objects.all()[0]
+        not_started_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).order_by('start_date_time')
+        if not_started_games:
+            return not_started_games[0]
+        else:
+            return None
+
+    #@staticmethod
+    #def get_last_game():
+    #    """
+    #    Current match being played or the last that finished
+    #    """
+    #    last_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).order_by('start_date_time')
+    #    if last_games:
+    #        return not_started_games[0]
+    #    else:
+    #        return None
+
 
 class Bet(TimestampedModel):
     betRoom = models.ForeignKey(BetRoom, null=True)
