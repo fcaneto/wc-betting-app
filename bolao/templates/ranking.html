@@ -40,7 +40,7 @@
 
       <h4>{{ next_game.home_team.name }}
         {% if next_game.status == 'H' %}
-          {{ next_game.home_goals_normal_time }} X {{ next_game.away_goals_extra_time }}
+          {{ next_game.home_goals_normal_time }} X {{ next_game.away_goals_normal_time }}
         {% else %}
           X
         {% endif %}
