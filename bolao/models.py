@@ -160,7 +160,7 @@ class Game(TimestampedModel):
         happening = Game.objects.filter(status=Game.STATUS_HAPPENING).order_by('start_date_time')
         if happening:
             return happening[0]
-        not_started_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).order_by('start_date_time')
+        not_started_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).order_by('-start_date_time')
         if not_started_games:
             return not_started_games[0]
         else:
