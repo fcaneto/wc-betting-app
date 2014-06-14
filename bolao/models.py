@@ -138,7 +138,7 @@ class Game(TimestampedModel):
     winner = models.ForeignKey(Team, null=True, blank=True, verbose_name=u'Vencedor (empate em tempo normal)')
 
     def __unicode__(self):
-        return "[%s] %s X %s" % (self.id, self.home_team, self.away_team)
+        return "[%s] %s X %s - %s - %s" % (self.id, self.home_team, self.away_team, self.status, self.start_date_time)
 
     def is_a_tie(self):
         return self.home_goals_normal_time == self.away_goals_normal_time
@@ -156,10 +156,11 @@ class Game(TimestampedModel):
         return self.status != Game.STATUS_NOT_STARTED
 
     @staticmethod
-    def get_next_game():
+    def get_current_game():
+        happening = Game.objects.filter(status=Game.STATUS_HAPPENING).order_by('start_date_time')
+        if happening:
+            return happening[0]
         not_started_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).order_by('start_date_time')
-        print not_started_games[0]
-        print not_started_games[1]
         if not_started_games:
             return not_started_games[0]
         else:

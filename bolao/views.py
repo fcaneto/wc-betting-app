@@ -105,17 +105,22 @@ def ranking(request):
         scores.append(Score(user))
 
     scores.sort(key=lambda score: score.total_score, reverse=True)
+    # TODO: grouped scores
 
-    next_game = Game.objects.get(id=5) #Game.get_next_game()
+    current_game = Game.get_current_game()
     next_game_bets = []
 
     for score in scores:
         """
         score variation is from current game being played OR last game played
         """
-        score.set_game_for_variation(next_game)
+        if current_game.status == Game.STATUS_HAPPENING:
+            score.set_game_for_variation(current_game)
+        else:
+            # last game
+            pass
 
-        next_bet_query = Bet.objects.all().filter(game=next_game).filter(player=score.player)
+        next_bet_query = Bet.objects.all().filter(game=current_game).filter(player=score.player)
         if score.player == request.user.player:
             my_bet = next_bet_query[0]
         else:
@@ -126,7 +131,7 @@ def ranking(request):
                               {'bet_room': request.user.player.bet_room,
                                'scores': scores,
                                'my_bet': my_bet,
-                               'next_game': next_game,
+                               'next_game': current_game,
                                'next_game_bets': next_game_bets,
                                'me': request.user},
                               RequestContext(request))
