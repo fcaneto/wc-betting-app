@@ -106,7 +106,7 @@ def ranking(request):
 
     scores.sort(key=lambda score: score.total_score, reverse=True)
 
-    next_game = Game.objects.get(id=4) #Game.get_next_game()
+    next_game = Game.objects.get(id=5) #Game.get_next_game()
     next_game_bets = []
 
     for score in scores:
@@ -361,7 +361,6 @@ class Score:
         self.variation_game_id = game.id
 
     def variation(self):
-        print '%s > %s' % (self.variation_game_id, self.score_by_bets[self.variation_game_id])
         return self.score_by_bets[self.variation_game_id]
 
     def get_bet_score(self, match_id):

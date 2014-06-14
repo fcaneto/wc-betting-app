@@ -2,7 +2,14 @@ TODO:
 
 - testar pontuação
 
-colocar +x pontos do lado da aposta no ranking
+- atualizacao automatica do prox jogo
+
+- agrupar placares smilares
+
+64x19
+
+pré-calcular a ponutacao de quem passou de fase antes do jogo começar
+
 
 - ranking: quem tá acertado de total verde, quem tá parcial de verde menor
 - trocar apostou por resultado no ultimo jogo
