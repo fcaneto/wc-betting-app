@@ -77,7 +77,7 @@
         <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
 
           <div class="col-md-1 col-xs-1">
-            <h6>{{ score.ranking }}</h6>
+            <h6>{% if score.ranking %}{{ score.ranking }}{% endif %}</h6>
           </div>
           <div class="col-md-7 col-xs-7">
             <h6>{{ score.player.user.first_name }} {{ score.player.user.last_name }}</h6>
