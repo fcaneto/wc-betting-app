@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{#{% load filters %}#}
+
+{% block head %}
+  <style>
+    .gray {
+      background-color: lightgray;
+    }
+
+    body {
+      margin-bottom: 20px;
+    }
+
+  .table > tbody > tr > td {
+    font-size: 10px;
+  }
+
+  .table {
+    margin-right: 30px
+  }
+
+  </style>
+
+{% endblock %}
+
+{% block rankingActive %}active{% endblock %}
+
+{% block container %}
+
+  <table class="table table-striped">
+    <tbody>
+    {% for  score in scores %}
+
+      <tr>
+        <td>
+          {{ score.ranking }}
+        </td>
+        <td>
+          {{ score.player.user.username }}
+        </td>
+        <td>
+          {{ score.total_score }}
+        </td>
+        {% for bet_score in score.get_bet_scores_as_list %}
+          <td>
+            {% if bet_score != 0 %}
+              {{ bet_score }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
