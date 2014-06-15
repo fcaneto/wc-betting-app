@@ -33,7 +33,7 @@
 
       <tr>
         <td>
-          {{ score.ranking }}
+          {% if score.ranking %}{{ score.ranking }}{% endif %}
         </td>
         <td>
           {{ score.player.user.username }}
