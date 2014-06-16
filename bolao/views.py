@@ -140,8 +140,8 @@ def ranking(request):
                                'next_game': current_game,
                                'next_game_bets': next_game_bets,
                                'me': request.user,
-                               'game_ids': range(1,38),
-                               'max_game_id': 38},
+                               'game_ids': range(1,37),
+                               'max_game_id': 37},
                               RequestContext(request))
 
 @login_required(login_url='login')
