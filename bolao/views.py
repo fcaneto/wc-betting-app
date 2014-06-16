@@ -97,59 +97,6 @@ def logout(request):
     logout_at_server(request)
     return HttpResponseRedirect('/')
 
-@login_required(login_url='login')
-def ranking_1(request):
-    scores = []
-    for user in User.objects.filter(player__bet_room=request.user.player.bet_room).order_by('first_name'):
-        scores.append(Score(user))
-
-    scores.sort(key=lambda score: score.total_score, reverse=True)
-    # TODO: grouped scores
-
-    current_game = Game.get_current_game()
-    next_game_bets = []
-
-    for score in scores:
-        """
-        score variation is from current game being played OR last game played
-        """
-        if current_game.status == Game.STATUS_HAPPENING:
-            score.set_game_for_variation(current_game)
-        else:
-            # last game
-            pass
-
-    ranking = 1
-    previous_score = None
-    for score in scores:
-        """
-        adding ranking to each score
-        """
-        if previous_score is not None:
-            if previous_score.total_score != score.total_score:
-                ranking += 1
-                score.ranking = ranking
-            else:
-                score.ranking = None
-        else:
-            score.ranking = ranking
-        previous_score = score
-
-        next_bet_query = Bet.objects.all().filter(game=current_game).filter(player=score.player)
-        if score.player == request.user.player:
-            my_bet = next_bet_query[0]
-        else:
-            if len(next_bet_query) > 0:
-                next_game_bets.append(next_bet_query[0])
-
-    return render_to_response('ranking_1.html',
-                              {'bet_room': request.user.player.bet_room,
-                               'scores': scores,
-                               'my_bet': my_bet,
-                               'next_game': current_game,
-                               'next_game_bets': next_game_bets,
-                               'me': request.user},
-                              RequestContext(request))
 
 @login_required(login_url='login')
 def ranking(request):
@@ -163,16 +110,6 @@ def ranking(request):
     current_game = Game.get_current_game()
     next_game_bets = []
 
-    for score in scores:
-        """
-        score variation is from current game being played OR last game played
-        """
-        if current_game.status == Game.STATUS_HAPPENING:
-            score.set_game_for_variation(current_game)
-        else:
-            # last game
-            pass
-
     ranking = 1
     previous_score = None
     for score in scores:
@@ -188,6 +125,8 @@ def ranking(request):
         else:
             score.ranking = ranking
         previous_score = score
+
+
 
         next_bet_query = Bet.objects.all().filter(game=current_game).filter(player=score.player)
         if score.player == request.user.player:
@@ -202,7 +141,9 @@ def ranking(request):
                                'my_bet': my_bet,
                                'next_game': current_game,
                                'next_game_bets': next_game_bets,
-                               'me': request.user},
+                               'me': request.user,
+                               'game_ids': range(1,38),
+                               'max_game_id': 38},
                               RequestContext(request))
 
 @login_required(login_url='login')
@@ -407,12 +348,12 @@ class Score:
         self.podium_scores = {}
         self.variation_game_id = 0
 
-        if Bet.query_all_bets(self.player).exists():
+        self.all_player_bets = list(Bet.query_all_bets(self.player))
+        if self.all_player_bets:
             self.has_bet = True
             self.score_by_bets = self._compute_all_bets()
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
 
-            # TODO FUCK
             third_place = Bet.get_by_match_id(self.player, 63)
             final = Bet.get_by_match_id(self.player, 64)
 
@@ -506,10 +447,11 @@ class Score:
 
     def get_bet_scores_as_list(self):
         bet_scores = []
-        for i in range(1, 65):
+        for i in range(1, 49):
             bet_scores.append(self.score_by_bets[i])
-            print i
-        print bet_scores
         return bet_scores
+
+    def get_bets_as_list(self):
+        return Bet.query_all_bets(self.player)
 
 

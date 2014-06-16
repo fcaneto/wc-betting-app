@@ -11,6 +11,16 @@
       margin-bottom: 20px;
     }
 
+    .table > tbody > tr > td,
+    .table > thead > tr > th {
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .table {
+      margin-top: 5px
+    }
+
   </style>
 
 {% endblock %}
@@ -19,93 +29,169 @@
 
 {% block container %}
 
-  <div class="row">
+  <!-- Nav tabs -->
+  <ul class="nav nav-pills">
+    <li class="active"><a href="#home" data-toggle="tab">Próximo Jogo</a></li>
+    <li><a href="#profile" data-toggle="tab">Todos os jogos (fase de grupos)</a></li>
+  </ul>
 
-    <div class="col-md-5">
-      <h4>
-        {% if next_game.status == 'H' %}
-          Jogando agora:
-        {% else %}
-          Prox. jogo: {# next_game.get_start_date_time #}
-        {% endif %}
-      </h4>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div class="tab-pane fade in active" id="home">
 
-      <h4>{{ next_game.home_team.name }}
-        {% if next_game.status == 'H' %}
-          {{ next_game.home_goals_normal_time }} X {{ next_game.away_goals_normal_time }}
-        {% else %}
-          X
-        {% endif %}
-        {{ next_game.away_team.name }}
-      </h4>
+      <div class="row">
 
+        <div class="col-md-5">
+          <h4>
+            {% if next_game.status == 'H' %}
+              Jogando agora:
+            {% else %}
+              Prox. jogo: {# next_game.get_start_date_time #}
+            {% endif %}
+          </h4>
 
-      <h3>As apostas foram:</h3>
+          <h4>{{ next_game.home_team.name }}
+            {% if next_game.status == 'H' %}
+              {{ next_game.home_goals_normal_time }} X {{ next_game.away_goals_normal_time }}
+            {% else %}
+              X
+            {% endif %}
+            {{ next_game.away_team.name }}
+          </h4>
 
-      <div class="row gray">
-        <div class="col-md-9 col-xs-7">
-          <h5>Você</h5>
-        </div>
-        <div class="col-md-3 col-xs-5">
-          <h6>{{ my_bet.home_score }} x {{ my_bet.away_score }}</h6>
-        </div>
-      </div>
+          <h3>As apostas foram:</h3>
 
-      {% for bet in next_game_bets %}
-        <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-          <div class="col-md-9 col-xs-7">
-            <h6>{{ bet.player.user.first_name }} {{ bet.player.user.last_name }}</h6>
-          </div>
-          <div class="col-md-3 col-xs-5">
-            <h6>{{ bet.home_score }} x {{ bet.away_score }}</h6>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class="col-md-1"></div>
-
-    <div class="col-md-6">
-      {% if not bet_room.is_open_to_betting %}
-        <h3>Principal rival: </h3>
-        <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}
-          ({{ me.player.rival_correlation }} similar)</h5>
-      {% endif %}
-
-      <h3>Classificação: </h3>
-      {% for score in scores %}
-        <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-
-          <div class="col-md-1 col-xs-1">
-            <h6>{% if score.ranking %}{{ score.ranking }}{% endif %}</h6>
-          </div>
-          <div class="col-md-7 col-xs-7">
-            <h6>{{ score.player.user.first_name }} {{ score.player.user.last_name }}</h6>
-          </div>
-
-          <div class="col-md-2 col-xs-2">
-            <h6>{{ score.total_score }}</h6>
-          </div>
-
-          {% if bet_room.is_open_to_betting %}
-            <div class="col-md-2 col-xs-2">
-              {% if score.has_bet %}
-                <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Apostou!</h6>
-              {% endif %}
+          <div class="row gray">
+            <div class="col-md-9 col-xs-7">
+              <h5>Você</h5>
             </div>
-          {% else %}
-            <div class="col-md-2 col-xs-2">
-              {% if score.variation > 0 %}
-              <h6><em>+ {{ score.variation }}</em></h6>
-              {% endif %}
+            <div class="col-md-3 col-xs-5">
+              <h6>{{ my_bet.home_score }} x {{ my_bet.away_score }}</h6>
             </div>
+          </div>
+
+          {% for bet in next_game_bets %}
+            <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+              <div class="col-md-9 col-xs-7">
+                <h6>{{ bet.player.user.first_name }} {{ bet.player.user.last_name }}</h6>
+              </div>
+              <div class="col-md-3 col-xs-5">
+                <h6>{{ bet.home_score }} x {{ bet.away_score }}</h6>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="col-md-1"></div>
+
+        <div class="col-md-6">
+          {% if not bet_room.is_open_to_betting %}
+            <h3>Principal rival: </h3>
+            <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}
+              ({{ me.player.rival_correlation }} similar)</h5>
           {% endif %}
 
-        </div>
-      {% endfor %}
-    </div>
+          <h3>Classificação: </h3>
+          {% for score in scores %}
+            <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
 
+              <div class="col-md-1 col-xs-1">
+                <h6>{% if score.ranking %}{{ score.ranking }}{% endif %}</h6>
+              </div>
+              <div class="col-md-7 col-xs-7">
+                <h6>{{ score.player.user.first_name }} {{ score.player.user.last_name }}</h6>
+              </div>
+
+              <div class="col-md-2 col-xs-2">
+                <h6>{{ score.total_score }}</h6>
+              </div>
+
+              {% if bet_room.is_open_to_betting %}
+                <div class="col-md-2 col-xs-2">
+                  {% if score.has_bet %}
+                    <h6><span class="glyphicon glyphicon-ok" style="margin-right: 5px"></span>Apostou!</h6>
+                  {% endif %}
+                </div>
+              {% else %}
+                <div class="col-md-2 col-xs-2">
+                  {% if score.variation > 0 %}
+                    <h6><em>+ {{ score.variation }}</em></h6>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+    </div>
+    <div class="tab-pane fade" id="profile">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Quem</th>
+          <th>Total</th>
+          {% for id in game_ids %}
+            <th>{{ id }}</th>
+          {% endfor %}
+          <th>
+            ...
+          </th>
+        </tr>
+
+        </thead>
+        <tbody>
+        {% for  score in scores %}
+          <tr>
+            <td>
+              {% if score.ranking %}{{ score.ranking }}{% endif %}
+            </td>
+            <td>
+              {{ score.player.user.username }}
+            </td>
+            <td>
+              {{ score.total_score }}
+            </td>
+            {% for bet_score in score.get_bet_scores_as_list %}
+              {% if forloop.counter == next_game.id %}
+                <td class="success">
+                  {% if bet_score != 0 %}
+                    {{ bet_score }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+              {% elif forloop.counter < max_game_id %}
+                <td>
+                  {% if bet_score != 0 %}
+                    {{ bet_score }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+              {% elif forloop.counter == max_game_id %}
+                <td>
+                  ...
+                </td>
+              {% endif %}
+            {% endfor %}
+
+
+            {#        {% for bet in score.get_bets_as_list %}#}
+            {#          <td>#}
+            {#            {{ bet.home_score }}x{{ bet.away_score }}#}
+            {#          </td>#}
+            {#        {% endfor %}#}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
+
 
 
 
