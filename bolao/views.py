@@ -118,15 +118,13 @@ def ranking(request):
         """
         if previous_score is not None:
             if previous_score.total_score != score.total_score:
-                ranking += 1
                 score.ranking = ranking
             else:
                 score.ranking = None
         else:
             score.ranking = ranking
+        ranking += 1
         previous_score = score
-
-
 
         next_bet_query = Bet.objects.all().filter(game=current_game).filter(player=score.player)
         if score.player == request.user.player:
