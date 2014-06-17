@@ -125,6 +125,7 @@ def ranking(request):
             score.ranking = ranking
         ranking += 1
         previous_score = score
+        score.set_game_for_variation(current_game)
 
         next_bet_query = Bet.objects.all().filter(game=current_game).filter(player=score.player)
         if score.player == request.user.player:
