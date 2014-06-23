@@ -151,9 +151,7 @@ def ranking(request):
                                'current_games': current_games,
                                'current_games_ids': map(lambda x: x.id, current_games),
                                'current_games_bets': current_games_bets,
-                               'me': request.user,
-                               'game_ids': range(1,37),
-                               'max_game_id': 37},
+                               'me': request.user},
                               RequestContext(request))
 
 @login_required(login_url='login')

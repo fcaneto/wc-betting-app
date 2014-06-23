@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{#{% load filters %}#}
+{% load filters %}
 
 {% block head %}
   <style>
@@ -32,7 +32,9 @@
   <!-- Nav tabs -->
   <ul class="nav nav-pills">
     <li class="active"><a href="#home" data-toggle="tab">Próximo Jogo</a></li>
-    <li><a href="#profile" data-toggle="tab">Todos os jogos (fase de grupos)</a></li>
+    <li><a href="#firstRoundFirstHalf" data-toggle="tab">Fase de grupos - Parte I</a></li>
+    <li><a href="#firstRoundSecondHalf" data-toggle="tab">Fase de grupos - Parte II</a></li>
+{#    <li><a href="#SecondRound" data-toggle="tab">Fase final</a></li>#}
   </ul>
 
   <!-- Tab panes -->
@@ -142,69 +144,96 @@
       </div>
 
     </div>
-    <div class="tab-pane fade" id="profile">
+    <div class="tab-pane fade" id="firstRoundFirstHalf">
       <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>#</th>
-          <th>Quem</th>
-          <th>Total</th>
-          {% for id in game_ids %}
-            <th>{{ id }}</th>
-          {% endfor %}
-          <th>
-            ...
-          </th>
-        </tr>
-
-        </thead>
-        <tbody>
-        {% for  score in scores %}
+        {% with 25 as max_game_id %}
+          <thead>
           <tr>
-            <td>
-              {% if score.ranking %}{{ score.ranking }}{% endif %}
-            </td>
-            <td>
-              {{ score.player.user.username }}
-            </td>
-            <td>
-              {{ score.total_score }}
-            </td>
-            {% for bet_score in score.get_bet_scores_as_list %}
-              {% if forloop.counter in current_games_ids %}
-                <td class="success">
-                  {% if bet_score != 0 %}
-                    {{ bet_score }}
-                  {% else %}
-                    -
-                  {% endif %}
-                </td>
-              {% elif forloop.counter < max_game_id %}
-                <td>
-                  {% if bet_score != 0 %}
-                    {{ bet_score }}
-                  {% else %}
-                    -
-                  {% endif %}
-                </td>
-              {% elif forloop.counter == max_game_id %}
-                <td>
-                  ...
-                </td>
-              {% endif %}
+            <th>#</th>
+            <th>Quem</th>
+            <th>Total</th>
+            {% for id in max_game_id|get_range %}
+              <th>{{ id }}</th>
             {% endfor %}
-
-
-            {#        {% for bet in score.get_bets_as_list %}#}
-            {#          <td>#}
-            {#            {{ bet.home_score }}x{{ bet.away_score }}#}
-            {#          </td>#}
-            {#        {% endfor %}#}
           </tr>
-        {% endfor %}
+
+          </thead>
+          <tbody>
+          {% for  score in scores %}
+            <tr>
+              <td>
+                {% if score.ranking %}{{ score.ranking }}{% endif %}
+              </td>
+              <td>
+                {{ score.player.user.username }}
+              </td>
+              <td>
+                {{ score.total_score }}
+              </td>
+              {% for bet_score in score.get_bet_scores_as_list %}
+                {% if forloop.counter < max_game_id %}
+                  <td {% if forloop.counter in current_games_ids %} class="success" {% endif %}>
+                    {% if bet_score != 0 %}
+                      {{ bet_score }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        {% endwith %}
         </tbody>
       </table>
     </div>
+
+    <div class="tab-pane fade" id="firstRoundSecondHalf">
+      <table class="table table-striped">
+        {% with 25 as min_game_id %}
+          {% with 49 as max_game_id %}
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Quem</th>
+            <th>Total</th>
+            {% for id in max_game_id|get_range:min_game_id %}
+              <th>{{ id }}</th>
+            {% endfor %}
+          </tr>
+
+          </thead>
+          <tbody>
+          {% for score in scores %}
+            <tr>
+              <td>
+                {% if score.ranking %}{{ score.ranking }}{% endif %}
+              </td>
+              <td>
+                {{ score.player.user.username }}
+              </td>
+              <td>
+                {{ score.total_score }}
+              </td>
+              {% for bet_score in score.get_bet_scores_as_list %}
+                {% if forloop.counter >= min_game_id and forloop.counter < max_game_id %}
+                  <td {% if forloop.counter in current_games_ids %} class="success" {% endif %}>
+                    {% if bet_score != 0 %}
+                      {{ bet_score }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+            {% endwith %}
+        {% endwith %}
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
 
