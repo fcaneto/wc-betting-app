@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 
+from itertools import izip
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_at_server
@@ -132,12 +133,11 @@ def ranking(request):
 
         game_bets = []
         for game in current_games:
-            next_bet_query = Bet.objects.all().filter(game=game).filter(player=score.player)
+            next_bet = score.get_bet(game.id)
             if score.player == request.user.player:
-                my_current_games_bets.append(next_bet_query[0])
+                my_current_games_bets.append(next_bet)
             else:
-                if len(next_bet_query) > 0:
-                    game_bets.append(next_bet_query[0])
+                game_bets.append(next_bet)
 
         if score.player != request.user.player:
             current_games_bets.append({'first_name': score.player.user.first_name,
@@ -347,6 +347,7 @@ class Score:
     total_score = placar total do jogador
     score_by_bets = dicionário (id do jogo) -> score
     podium_scores = dicionario pontos extras do podium (posicao) -> score
+    bets = dicionario (id do jogo) -> bet
     """
     def __init__(self, user):
 
@@ -356,8 +357,11 @@ class Score:
         self.podium_scores = {}
         self.variation_game_ids = 0
 
-        self.all_player_bets = list(Bet.query_all_bets(self.player))
-        if self.all_player_bets:
+        bet_list = list(Bet.query_all_bets(self.player))
+        self.bets =  dict(izip([bet.game.id for bet in bet_list], bet_list))
+        print self.bets
+
+        if self.bets:
             self.has_bet = True
             self.score_by_bets = self._compute_all_bets()
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
@@ -418,7 +422,7 @@ class Score:
     def _compute_all_bets(self):
         score_by_game = {}
 
-        for bet in Bet.query_all_bets(self.player):
+        for game_id, bet in self.bets.iteritems():
             bet_score = self._compute_bet_score(bet)
 
             # Extra points for secound round
@@ -466,5 +470,8 @@ class Score:
 
     def get_bets_as_list(self):
         return Bet.query_all_bets(self.player)
+
+    def get_bet(self, match_id):
+        return self.bets[match_id]
 
 
