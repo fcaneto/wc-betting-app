@@ -85,7 +85,7 @@
 
           {% for user in current_games_bets %}
             <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-              <div class="col-md-8 col-xs-7">
+              <div class="col-md-8 col-xs-8">
                 <h6>{{ user.first_name }} {{ user.last_name }}</h6>
               </div>
               {% for bet in user.bets %}
