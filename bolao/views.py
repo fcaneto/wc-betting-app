@@ -149,6 +149,7 @@ def ranking(request):
                                'scores': scores,
                                'my_current_games_bets': my_current_games_bets,
                                'current_games': current_games,
+                               'current_games_ids': map(lambda x: x.id, current_games),
                                'current_games_bets': current_games_bets,
                                'me': request.user,
                                'game_ids': range(1,37),

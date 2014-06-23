@@ -171,7 +171,7 @@
               {{ score.total_score }}
             </td>
             {% for bet_score in score.get_bet_scores_as_list %}
-              {% if forloop.counter == next_game.id %}
+              {% if forloop.counter in current_games_ids %}
                 <td class="success">
                   {% if bet_score != 0 %}
                     {{ bet_score }}
