@@ -107,8 +107,11 @@ def ranking(request):
     scores.sort(key=lambda score: score.total_score, reverse=True)
     # TODO: grouped scores
 
-    current_game = Game.get_current_game()
-    next_game_bets = []
+    current_games = Game.get_current_games()
+    print list(current_games)
+
+    current_games_bets = []
+    my_current_games_bets = []
 
     ranking = 1
     previous_score = None
@@ -125,21 +128,28 @@ def ranking(request):
             score.ranking = ranking
         ranking += 1
         previous_score = score
-        score.set_game_for_variation(current_game)
+        score.set_games_for_variation(current_games)
 
-        next_bet_query = Bet.objects.all().filter(game=current_game).filter(player=score.player)
-        if score.player == request.user.player:
-            my_bet = next_bet_query[0]
-        else:
-            if len(next_bet_query) > 0:
-                next_game_bets.append(next_bet_query[0])
+        game_bets = []
+        for game in current_games:
+            next_bet_query = Bet.objects.all().filter(game=game).filter(player=score.player)
+            if score.player == request.user.player:
+                my_current_games_bets.append(next_bet_query[0])
+            else:
+                if len(next_bet_query) > 0:
+                    game_bets.append(next_bet_query[0])
+
+        if score.player != request.user.player:
+            current_games_bets.append({'first_name': score.player.user.first_name,
+                                       'last_name': score.player.user.last_name,
+                                       'bets': game_bets})
 
     return render_to_response('ranking.html',
                               {'bet_room': request.user.player.bet_room,
                                'scores': scores,
-                               'my_bet': my_bet,
-                               'next_game': current_game,
-                               'next_game_bets': next_game_bets,
+                               'my_current_games_bets': my_current_games_bets,
+                               'current_games': current_games,
+                               'current_games_bets': current_games_bets,
                                'me': request.user,
                                'game_ids': range(1,37),
                                'max_game_id': 37},
@@ -345,7 +355,7 @@ class Score:
         self.score_by_bets = {}
         self.total_score = 0.0
         self.podium_scores = {}
-        self.variation_game_id = 0
+        self.variation_game_ids = 0
 
         self.all_player_bets = list(Bet.query_all_bets(self.player))
         if self.all_player_bets:
@@ -371,11 +381,16 @@ class Score:
                 self.podium_scores[1] = 15
                 self.total_score += 15
 
-    def set_game_for_variation(self, game):
-        self.variation_game_id = game.id
+    def set_games_for_variation(self, games):
+        self.variation_game_ids = []
+        for game in games:
+            self.variation_game_ids.append(game.id)
 
     def variation(self):
-        return self.score_by_bets[self.variation_game_id]
+        variation = 0
+        for game_id in self.variation_game_ids:
+            variation += self.score_by_bets[game_id]
+        return variation
 
     def get_bet_score(self, match_id):
         return self.score_by_bets.get(match_id, 0.0)

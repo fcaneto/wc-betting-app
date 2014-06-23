@@ -156,15 +156,21 @@ class Game(TimestampedModel):
         return self.status != Game.STATUS_NOT_STARTED
 
     @staticmethod
-    def get_current_game():
+    def get_current_games():
         happening = Game.objects.filter(status=Game.STATUS_HAPPENING).order_by('start_date_time')
         if happening:
-            return happening[0]
+            return happening
         not_started_games = Game.objects.filter(status=Game.STATUS_NOT_STARTED).exclude(start_date_time__isnull=True).order_by('start_date_time')
-        if not_started_games:
-            return not_started_games[0]
-        else:
-            return None
+        next_games = []
+        next_date_time = None
+        for game in not_started_games:
+            if next_date_time is None:
+                next_date_time = game.start_date_time
+            if game.start_date_time == next_date_time:
+                next_games.append(game)
+            else:
+                break
+        return next_games
 
     #@staticmethod
     #def get_last_game():

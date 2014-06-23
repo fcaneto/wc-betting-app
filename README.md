@@ -1,6 +1,13 @@
 TODO:
 
--
+- outro jogos da primeira rodada
+- classificacao completa segunda rodada
+
+ideias:
+- estatisticas (aproveitam. primeira fase, primeira rodada, % pontos totais)
+- jogos fundamentais (para escapar da lanterna - estatisticas gerais)
+- jogos / posicao
+- campeao da lanterna / troféu nautico
 
 - id dos jogos na lista dos reulstaods
 - popover do jogo (caso especial finais)
@@ -8,8 +15,6 @@ TODO:
 - empatados contam no ranking
 
 - agrupar placares smilares
-
-64x19
 
 pré-calcular a ponutacao de quem passou de fase antes do jogo começar
 

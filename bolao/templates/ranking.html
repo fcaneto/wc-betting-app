@@ -46,38 +46,53 @@
             {% if next_game.status == 'H' %}
               Jogando agora:
             {% else %}
-              Prox. jogo: {# next_game.get_start_date_time #}
+              Prox(s). jogo(s): {# next_game.get_start_date_time #}
             {% endif %}
           </h4>
 
-          <h4>{{ next_game.home_team.name }}
-            {% if next_game.status == 'H' %}
-              {{ next_game.home_goals_normal_time }} X {{ next_game.away_goals_normal_time }}
-            {% else %}
-              X
-            {% endif %}
-            {{ next_game.away_team.name }}
-          </h4>
+          {% for current_game in current_games %}
+            <h4>#{{ current_game.id }}: {{ current_game.home_team.name }}
+              {% if current_game.status == 'H' %}
+                {{ current_game.home_goals_normal_time }} X {{ current_game.away_goals_normal_time }}
+              {% else %}
+                X
+              {% endif %}
+              {{ current_game.away_team.name }}
+            </h4>
+          {% endfor %}
 
-          <h3>As apostas foram:</h3>
-
-          <div class="row gray">
-            <div class="col-md-9 col-xs-7">
-              <h5>Você</h5>
+          <div class="row">
+            <div class="col-md-8 col-xs-8">
+              <h3>As apostas foram:</h3>
             </div>
-            <div class="col-md-3 col-xs-5">
-              <h6>{{ my_bet.home_score }} x {{ my_bet.away_score }}</h6>
-            </div>
+            {% for current_game in current_games %}
+              <div class="col-md-2 col-xs-2">
+                <h3>#{{ current_game.id }}</h3>
+              </div>
+            {% endfor %}
           </div>
 
-          {% for bet in next_game_bets %}
-            <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
-              <div class="col-md-9 col-xs-7">
-                <h6>{{ bet.player.user.first_name }} {{ bet.player.user.last_name }}</h6>
-              </div>
-              <div class="col-md-3 col-xs-5">
+          <div class="row gray">
+            <div class="col-md-8 col-xs-8">
+              <h5>Você</h5>
+            </div>
+            {% for bet in my_current_games_bets %}
+              <div class="col-md-2 col-xs-2">
                 <h6>{{ bet.home_score }} x {{ bet.away_score }}</h6>
               </div>
+            {% endfor %}
+          </div>
+
+          {% for user in current_games_bets %}
+            <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+              <div class="col-md-8 col-xs-7">
+                <h6>{{ user.first_name }} {{ user.last_name }}</h6>
+              </div>
+              {% for bet in user.bets %}
+                <div class="col-md-2 col-xs-2">
+                  <h6>{{ bet.home_score }} x {{ bet.away_score }}</h6>
+                </div>
+              {% endfor %}
             </div>
           {% endfor %}
         </div>
