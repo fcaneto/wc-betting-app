@@ -144,6 +144,8 @@ def ranking(request):
                                        'last_name': score.player.user.last_name,
                                        'bets': game_bets})
 
+    round_of_16_matches = []
+
     return render_to_response('ranking.html',
                               {'bet_room': request.user.player.bet_room,
                                'scores': scores,
@@ -151,7 +153,8 @@ def ranking(request):
                                'current_games': current_games,
                                'current_games_ids': map(lambda x: x.id, current_games),
                                'current_games_bets': current_games_bets,
-                               'me': request.user},
+                               'me': request.user,
+                               'round_of_16_matches': round_of_16_matches},
                               RequestContext(request))
 
 @login_required(login_url='login')
@@ -468,10 +471,12 @@ class Score:
             bet_scores.append(self.score_by_bets[i])
         return bet_scores
 
-    def get_bets_as_list(self):
-        return Bet.query_all_bets(self.player)
-
     def get_bet(self, match_id):
         return self.bets[match_id]
 
+    def get_round_of_16_bets(self):
+        bets = []
+        for i in range(49, 58):
+            bets.append(self.bets[i])
+        return bets
 
