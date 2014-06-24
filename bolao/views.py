@@ -476,7 +476,7 @@ class Score:
 
     def get_round_of_16_bets(self):
         bets = []
-        for i in range(49, 58):
+        for i in range(49, 57):
             bets.append(self.bets[i])
         return bets
 
