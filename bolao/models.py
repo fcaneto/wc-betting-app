@@ -87,9 +87,9 @@ class Stadium(models.Model):
 
 class Game(TimestampedModel):
     home_team = models.ForeignKey(Team, related_name='home_games',
-                                  related_query_name='home_game', null=True, default=None)
+                                  related_query_name='home_game', null=True, blank=True, default=None)
     away_team = models.ForeignKey(Team, related_name='away_games',
-                                  related_query_name='away_game', null=True, default=None)
+                                  related_query_name='away_game', null=True, blank=True, default=None)
 
     #stadium = models.ForeignKey('Stadium', null=True)
     start_date_time = models.DateTimeField(null=True, blank=True, verbose_name=u'Data e hora de início')
@@ -171,6 +171,10 @@ class Game(TimestampedModel):
             else:
                 break
         return next_games
+
+    @staticmethod
+    def get_round_of_16_games():
+        return Game.objects.filter(id__range=(49, 56))
 
     #@staticmethod
     #def get_last_game():

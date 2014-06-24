@@ -236,31 +236,48 @@
 
   <div class="tab-pane fade" id="roundOf16">
     <h4>Simulação para Oitavas de Final:</h4>
-{#    <div class="row">#}
-{#      <div class="col-md-2 col-xs-2">#}
-{#        <h5>Jogos:</h5>#}
-{#      </div>#}
-{#      {% for match in round_of_16_matches %}#}
-{#      <h6><img src="/static/flags/{{match.home_team.code}}.png">#}
-{#      {{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}#}
-{#      <img src="/static/flags/{{match.away_team.code}}.png"></h6>#}
-{#      {% endfor %}#}
-{#    </div>#}
+
+    <div class="row">
+      <div class="col-md-2 col-xs-2">
+        <h5>Jogos:</h5>
+      </div>
+      {% for match in round_of_16_matches %}
+        <div class="col-md-1 col-xs-1">
+        {% if match.home_team %}
+        <h6><img src="/static/flags/{{ match.home_team.code }}.png">
+        {% else %}
+        <h6>?
+        {% endif %}
+          x
+{#          {{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}#}
+        {% if match.away_team %}
+          <img src="/static/flags/{{ match.away_team.code }}.png"></h6>
+        {% else %}
+        ?</h6>
+        {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="row">
+      <div class="col-md-2 col-xs-2">
+        <h5>Apostas:</h5>
+      </div>
+    </div>
     {% for score in scores %}
-      <div class="row">
-      <div class="col-md-1 col-xs-1">
-      <h6>{{ score.player.user.username }}</h6>
-      </div>
-      <div class="col-md-1 col-xs-1">
-{#      <h6>xx.x</h6>#}
-      </div>
-      {% for bet in score.get_round_of_16_bets %}
-      <div class="col-md-1 col-xs-1">
-      <h6><img src="/static/flags/{{bet.home_team.code}}.png">
-        x
-{#      {{ bet.home_score }} x {{ bet.home_score }}#}
-      <img src="/static/flags/{{bet.away_team.code}}.png"></h6>
-      </div>
+      <div class="row {% if score.player == me.player %} gray {% endif %}">
+        <div class="col-md-1 col-xs-1">
+          <h6>{{ score.player.user.username }}</h6>
+        </div>
+        <div class="col-md-1 col-xs-1">
+          {#      <h6>xx.x</h6>#}
+        </div>
+        {% for bet in score.get_round_of_16_bets %}
+          <div class="col-md-1 col-xs-1">
+            <h6><img src="/static/flags/{{ bet.home_team.code }}.png">
+              x
+              {#      {{ bet.home_score }} x {{ bet.home_score }}#}
+              <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+          </div>
         {% endfor %}
       </div>
     {% endfor %}

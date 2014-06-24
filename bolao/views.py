@@ -144,7 +144,7 @@ def ranking(request):
                                        'last_name': score.player.user.last_name,
                                        'bets': game_bets})
 
-    round_of_16_matches = []
+    round_of_16_matches = Game.get_round_of_16_games()
 
     return render_to_response('ranking.html',
                               {'bet_room': request.user.player.bet_room,
