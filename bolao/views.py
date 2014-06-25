@@ -12,16 +12,21 @@ from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.core.cache import cache
 
 from django.views.decorators.csrf import csrf_exempt
 
 from bolao.models import Game, Bet, Team, BetRoom, Group
 
+from settings import RANKING_HTML_CACHE
+
 
 @login_required(login_url='login')
 def change_password(request):
     if request.method == 'GET':
-        return render_to_response('change_password.html', {'bet_room': request.user.player.bet_room}, RequestContext(request))
+        return render_to_response('change_password.html', {'bet_room': request.user.player.bet_room},
+                                  RequestContext(request))
     else:
         password = request.POST.get('newPassword')
         password_check = request.POST.get('passwordCheck')
@@ -99,21 +104,20 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 
-@login_required(login_url='login')
-def ranking(request):
-    scores = []
-    for user in User.objects.filter(player__bet_room=request.user.player.bet_room).order_by('first_name'):
-        scores.append(Score(user))
+def build_ranking_data(request):
 
-    scores.sort(key=lambda score: score.total_score, reverse=True)
-    # TODO: grouped scores
+    scores = cache.get('scores')
+    if not scores:
+        scores = []
+        for user in User.objects.filter(player__bet_room=request.user.player.bet_room).order_by('first_name'):
+            scores.append(Score(user))
+        scores.sort(key=lambda score: score.total_score, reverse=True)
+
+        cache.set('scores', scores)
 
     current_games = Game.get_current_games()
-    print list(current_games)
-
     current_games_bets = []
     my_current_games_bets = []
-
     ranking = 1
     previous_score = None
     for score in scores:
@@ -144,29 +148,50 @@ def ranking(request):
                                        'last_name': score.player.user.last_name,
                                        'bets': game_bets})
 
+    return current_games, current_games_bets, my_current_games_bets, scores
+
+import time
+
+@login_required(login_url='login')
+def ranking(request):
+
+    start_time = time.time()
+    current_games, current_games_bets, my_current_games_bets, scores = build_ranking_data(request)
+
+    elapsed_time = time.time() - start_time
+    print '[1]: %.3f' % (elapsed_time)
+    start_time = time.time()
+
     round_of_16_matches = Game.get_round_of_16_games()
 
-    return render_to_response('ranking.html',
-                              {'bet_room': request.user.player.bet_room,
-                               'scores': scores,
-                               'my_current_games_bets': my_current_games_bets,
-                               'current_games': current_games,
-                               'current_games_ids': map(lambda x: x.id, current_games),
-                               'current_games_bets': current_games_bets,
-                               'me': request.user,
-                               'round_of_16_matches': round_of_16_matches},
-                              RequestContext(request))
+    rendered_template = render_to_string('ranking.html',
+                                         {'bet_room': request.user.player.bet_room,
+                                          'scores': scores,
+                                          'my_current_games_bets': my_current_games_bets,
+                                          'current_games': current_games,
+                                          'current_games_ids': map(lambda x: x.id, current_games),
+                                          'current_games_bets': current_games_bets,
+                                          'me': request.user,
+                                          'round_of_16_matches': round_of_16_matches},
+                                         RequestContext(request))
+    elapsed_time = time.time() - start_time
+    print '[2]: %.3f' % (elapsed_time)
+
+    return HttpResponse(rendered_template, content_type="text/html")
+
 
 @login_required(login_url='login')
 def rivals(request):
     if request.user.player.bet_room.is_open_to_betting:
         return HttpResponse("Hacker safado, tentando entrar direto com a URL. O bolão ainda está aberto para edição.")
     else:
-        users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id).order_by('first_name')
+        users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id).order_by(
+            'first_name')
         return render_to_response('rivals.html',
                                   {'me': request.user,
                                    'others': users},
                                   RequestContext(request))
+
 
 @login_required(login_url='login')
 def player(request):
@@ -352,6 +377,7 @@ class Score:
     podium_scores = dicionario pontos extras do podium (posicao) -> score
     bets = dicionario (id do jogo) -> bet
     """
+
     def __init__(self, user):
 
         self.player = user.player
@@ -361,8 +387,7 @@ class Score:
         self.variation_game_ids = 0
 
         bet_list = list(Bet.query_all_bets(self.player))
-        self.bets =  dict(izip([bet.game.id for bet in bet_list], bet_list))
-        print self.bets
+        self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
 
         if self.bets:
             self.has_bet = True
@@ -418,7 +443,6 @@ class Score:
                         score += 1.5
                     if bet.away_score == bet.game.away_goals_normal_time:
                         score += 1.5
-
 
         return score
 

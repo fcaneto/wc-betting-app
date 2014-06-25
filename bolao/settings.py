@@ -114,3 +114,5 @@ def get_cache():
     }
 
 CACHES = get_cache()
+
+RANKING_HTML_CACHE = 'ranking_html_cache'
