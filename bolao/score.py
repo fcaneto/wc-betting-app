@@ -13,9 +13,14 @@ def build_scores():
         for user in User.objects.filter(player__bet_room=bet_room):
             scores.append(Score(user))
         scores.sort(key=lambda score: score.total_score, reverse=True)
-
-    cache.set('scores', scores)
+        cache.set('scores_' + bet_room.id, scores)
     print 'BUILDING Scores... OK'
+
+def get_scores(bet_room):
+    scores = cache.get('scores' + bet_room.id)
+    if not scores:
+        build_scores()
+        scores = cache.get('scores' + bet_room.id)
     return scores
 
 class Score:

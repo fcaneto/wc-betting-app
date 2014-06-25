@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.core.cache import cache
 
-from score import Score, build_scores
+from score import Score, build_scores, get_scores
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -105,9 +105,7 @@ def logout(request):
 
 def build_ranking_data(request):
 
-    scores = cache.get('scores')
-    if not scores:
-        scores = build_scores()
+    scores = get_scores(request.user.player.bet_room)
 
     current_games = Game.get_current_games()
     current_games_bets = []
