@@ -264,8 +264,8 @@
       </div>
     </div>
     {% for score in scores %}
-      <div class="row {% if score.player == me.player %} gray {% endif %}">
-        <div class="col-md-1 col-xs-1">
+      <div class="row">
+        <div class="col-md-1 col-xs-1 {% if score.player == me.player %} gray {% endif %}">
           <h6>{{ score.player.user.username }}</h6>
         </div>
         <div class="col-md-1 col-xs-1">
