@@ -9,6 +9,8 @@ pylibmc==1.3.0
 pystache==0.5.4
 python-dateutil==2.2
 python-mimeparse==0.1.4
+redis==2.10.1
+rq==0.4.6
 six==1.6.1
 static==1.0.2
 wsgiref==0.1.2

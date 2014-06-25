@@ -155,6 +155,19 @@ class Game(TimestampedModel):
     def has_started(self):
         return self.status != Game.STATUS_NOT_STARTED
 
+    def save(self, update_ts=True, *args, **kwargs):
+
+        #from rq import Queue
+        #from worker import conn
+        from score import build_scores
+        #
+        #q = Queue(connection=conn)
+        #result = q.enqueue(build_scores, 'http://heroku.com')
+
+        build_scores()
+
+        super(Game, self).save(*args, **kwargs)
+
     @staticmethod
     def get_current_games():
         happening = Game.objects.filter(status=Game.STATUS_HAPPENING).order_by('start_date_time')
