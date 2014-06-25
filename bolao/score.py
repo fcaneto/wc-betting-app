@@ -34,6 +34,8 @@ class Score:
         self.podium_scores = {}
         self.variation_game_ids = 0
 
+        self.round_of_16_qualified_score = 0.0
+
         bet_list = list(Bet.query_all_bets(self.player))
         self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
 
@@ -41,6 +43,7 @@ class Score:
             self.has_bet = True
             self.score_by_bets = self._compute_all_bets()
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
+            self.total_score += self.round_of_16_qualified_score
 
             third_place = Bet.get_by_match_id(self.player, 63)
             final = Bet.get_by_match_id(self.player, 64)
@@ -102,10 +105,10 @@ class Score:
 
             # Extra points for secound round
             if bet.game.stage == Game.ROUND_OF_16:
-                if bet.home_team == bet.game.home_team:
-                    bet_score += 6
-                if bet.away_team == bet.game.away_team:
-                    bet_score += 6
+                if bet.home_team == bet.game.home_team or bet.home_team == bet.game.away_team:
+                    self.round_of_16_qualified_score += 6
+                if bet.away_team == bet.game.away_team or bet.away_team == bet.game.home_team:
+                    self.round_of_16_qualified_score += 6
 
             if bet.game.stage == Game.QUARTER_FINALS:
                 if bet.home_team == bet.game.home_team:
@@ -144,8 +147,6 @@ class Score:
         return bet_scores
 
     def get_bet(self, match_id):
-        print '\n\n\n\n\n'
-        print self.bets
         return self.bets[match_id]
 
     def get_round_of_16_bets(self):

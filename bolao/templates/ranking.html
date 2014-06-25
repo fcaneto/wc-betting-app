@@ -269,7 +269,7 @@
           <h6>{{ score.player.user.username }}</h6>
         </div>
         <div class="col-md-1 col-xs-1">
-          {#      <h6>xx.x</h6>#}
+          <h6><em>+ {{ score.round_of_16_qualified_score }}</em></h6>
         </div>
         {% for bet in score.get_round_of_16_bets %}
           <div class="col-md-1 col-xs-1">
