@@ -44,6 +44,7 @@ class Score:
         #self.player_username = user.username
         #self.player_first_name = user.first_name
         #self.player_last_name = user.last_name
+        self.player = user.player
 
         self.score_by_bets = {}
         self.total_score = 0.0
