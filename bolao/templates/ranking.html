@@ -273,10 +273,10 @@
         </div>
         {% for bet in score.get_round_of_16_bets %}
           <div class="col-md-1 col-xs-1">
-            <h6><img src="/static/flags/{{ bet.home_team.code }}.png">
+            <h6><img src="/static/flags/{{ bet.home_team_code }}.png">
               x
               {#      {{ bet.home_score }} x {{ bet.home_score }}#}
-              <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+              <img src="/static/flags/{{ bet.away_team_code }}.png"></h6>
           </div>
         {% endfor %}
       </div>

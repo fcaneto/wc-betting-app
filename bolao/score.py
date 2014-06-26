@@ -6,9 +6,16 @@ from bolao.models import BetRoom, Bet, Game
 from itertools import izip
 from django.core.cache import cache
 
-def build_scores():
+def build_scores(bet_room=None):
     print 'BUILDING Scores...'
     scores = []
+
+    if bet_room is not None:
+        for user in User.objects.filter(player__bet_room=bet_room):
+            scores.append(Score(user))
+        scores.sort(key=lambda score: score.total_score, reverse=True)
+        return scores
+
     for bet_room in BetRoom.objects.all():
         for user in User.objects.filter(player__bet_room=bet_room):
             scores.append(Score(user))
@@ -17,10 +24,10 @@ def build_scores():
     print 'BUILDING Scores... OK'
 
 def get_scores(bet_room):
-    scores = cache.get('scores_%s' % bet_room.id)
-    if not scores:
-        build_scores()
-        scores = cache.get('scores_%s' % bet_room.id)
+    #scores = cache.get('scores_%s' % bet_room.id)
+    #if not scores:
+    scores = build_scores(bet_room)
+        #scores = cache.get('scores_%s' % bet_room.id)
     return scores
 
 class Score:
@@ -33,7 +40,11 @@ class Score:
 
     def __init__(self, user):
 
-        self.player = user.player
+        self.player_id = user.player_id
+        self.player_username = user.username
+        self.player_first_name = user.first_name
+        self.player_last_name = user.last_name
+
         self.score_by_bets = {}
         self.total_score = 0.0
         self.podium_scores = {}
@@ -41,7 +52,7 @@ class Score:
 
         self.round_of_16_qualified_score = 0.0
 
-        bet_list = list(Bet.query_all_bets(self.player))
+        bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
         self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
 
         if self.bets:
@@ -159,3 +170,11 @@ class Score:
         for i in range(49, 57):
             bets.append(self.bets[i])
         return bets
+
+def build_list_simple_bet_objects(bets):
+    simples_bets = []
+    for bet in bets:
+        simple_bet = {'away_team_code': bet.away_team.code,
+                      'home_team_code': bet.home_team.code,}
+
+
