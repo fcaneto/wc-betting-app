@@ -40,10 +40,10 @@ class Score:
 
     def __init__(self, user):
 
-        self.player_id = user.player_id
-        self.player_username = user.username
-        self.player_first_name = user.first_name
-        self.player_last_name = user.last_name
+        #self.player_id = user.player_id
+        #self.player_username = user.username
+        #self.player_first_name = user.first_name
+        #self.player_last_name = user.last_name
 
         self.score_by_bets = {}
         self.total_score = 0.0
