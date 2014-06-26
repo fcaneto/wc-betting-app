@@ -151,7 +151,7 @@
         <tr>
           <th>#</th>
           <th>Quem</th>
-          <th>Total</th>
+          <th>Soma</th>
           {% for id in max_game_id|get_range %}
             <th>{{ id }}</th>
           {% endfor %}
@@ -168,7 +168,7 @@
               {{ score.player.user.username }}
             </td>
             <td>
-              {{ score.total_score }}
+              {{ score.first_round_first_half_score }}
             </td>
             {% for bet_score in score.get_bet_scores_as_list %}
               {% if forloop.counter < max_game_id %}
@@ -196,7 +196,7 @@
           <tr>
             <th>#</th>
             <th>Quem</th>
-            <th>Total</th>
+            <th>Soma</th>
             {% for id in max_game_id|get_range:min_game_id %}
               <th>{{ id }}</th>
             {% endfor %}
@@ -213,7 +213,7 @@
                 {{ score.player.user.username }}
               </td>
               <td>
-                {{ score.total_score }}
+                {{ score.first_round_second_half_score }}
               </td>
               {% for bet_score in score.get_bet_scores_as_list %}
                 {% if forloop.counter >= min_game_id and forloop.counter < max_game_id %}
@@ -274,6 +274,8 @@
         {% for bet in score.get_round_of_16_bets %}
           <div class="col-md-1 col-xs-1">
             <h6><img src="/static/flags/{{ bet.home_team.code }}.png">
+{#              <span class="glyphicon glyphicon-ok"></span>#}
+
               x
               {#      {{ bet.home_score }} x {{ bet.home_score }}#}
               <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>

@@ -51,6 +51,8 @@ class Score:
         self.podium_scores = {}
         self.variation_game_ids = 0
 
+        self.first_round_first_half_score = 0.0
+        self.first_round_second_half_score = 0.0
         self.round_of_16_qualified_score = 0.0
 
         bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
@@ -154,6 +156,10 @@ class Score:
                     bet_score += 12
 
             score_by_game[bet.game.id] = bet_score
+            if game_id < 25:
+                self.first_round_first_half_score += bet_score
+            elif game_id < 49:
+                self.first_round_second_half_score += bet_score
 
         return score_by_game
 
