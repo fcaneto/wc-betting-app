@@ -189,6 +189,10 @@ class Game(TimestampedModel):
     def get_round_of_16_games():
         return Game.objects.filter(id__range=(49, 56)).order_by('id')
 
+    @staticmethod
+    def get_quarter_finals_games():
+        return Game.objects.filter(id__range=(57, 60)).order_by('id')
+
     #@staticmethod
     #def get_last_game():
     #    """

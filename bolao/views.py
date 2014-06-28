@@ -155,6 +155,7 @@ def ranking(request):
     start_time = time.time()
 
     round_of_16_matches = Game.get_round_of_16_games()
+    quarter_finals_matches = Game.get_quarter_finals_games()
 
     rendered_template = render_to_string('ranking.html',
                                          {'bet_room': request.user.player.bet_room,
@@ -164,7 +165,8 @@ def ranking(request):
                                           'current_games_ids': map(lambda x: x.id, current_games),
                                           'current_games_bets': current_games_bets,
                                           'me': request.user,
-                                          'round_of_16_matches': round_of_16_matches},
+                                          'round_of_16_matches': round_of_16_matches,
+                                          'quarter_finals_matches': quarter_finals_matches},
                                          RequestContext(request))
     elapsed_time = time.time() - start_time
     print '[2]: %.3f' % (elapsed_time)

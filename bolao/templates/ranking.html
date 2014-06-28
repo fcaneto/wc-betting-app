@@ -34,7 +34,8 @@
     <li class="active"><a href="#home" data-toggle="tab">Próximo Jogo</a></li>
     <li><a href="#firstRoundFirstHalf" data-toggle="tab">Fase de grupos - Parte I</a></li>
     <li><a href="#firstRoundSecondHalf" data-toggle="tab">Fase de grupos - Parte II</a></li>
-    <li><a href="#roundOf16" data-toggle="tab">Oitavas (Beta)</a></li>
+    <li><a href="#roundOf16" data-toggle="tab">Oitavas</a></li>
+    <li><a href="#quarterFinals" data-toggle="tab">Quartas</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -235,7 +236,7 @@
   </div>
 
   <div class="tab-pane fade" id="roundOf16">
-    <h4>Qualificados para Oitavas de Final:</h4>
+    <h4>Classificados para Oitavas de Final:</h4>
 
     <div class="row">
       <div class="col-md-2 col-xs-2">
@@ -286,6 +287,57 @@
 
   </div>
 
+  <div class="tab-pane fade" id="quarterFinals">
+    <h4>Classificados para Quartas de Final:</h4>
+
+    <div class="row">
+      <div class="col-md-2 col-xs-2">
+        <h5>Jogos:</h5>
+      </div>
+      {% for match in quarter_finals_matches %}
+        <div class="col-md-1 col-xs-1">
+        {% if match.home_team %}
+        <h6><img src="/static/flags/{{ match.home_team.code }}.png">
+        {% else %}
+        <h6>?
+        {% endif %}
+          x
+{#          {{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}#}
+        {% if match.away_team %}
+          <img src="/static/flags/{{ match.away_team.code }}.png"></h6>
+        {% else %}
+        ?</h6>
+        {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="row">
+      <div class="col-md-2 col-xs-2">
+        <h5>Apostas:</h5>
+      </div>
+    </div>
+    {% for score in scores %}
+      <div class="row">
+        <div class="col-md-1 col-xs-1 {% if score.player == me.player %} gray {% endif %}">
+          <h6>{{ score.player.user.username }}</h6>
+        </div>
+        <div class="col-md-1 col-xs-1">
+          <h6><em>+ {{ score.quarter_finals_qualified_score }}</em></h6>
+        </div>
+        {% for bet in score.get_quarter_finals_bets %}
+          <div class="col-md-1 col-xs-1">
+            <h6><img src="/static/flags/{{ bet.home_team.code }}.png">
+{#              <span class="glyphicon glyphicon-ok"></span>#}
+
+              x
+              {#      {{ bet.home_score }} x {{ bet.home_score }}#}
+              <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+  </div>
   </div>
 
 

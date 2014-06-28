@@ -54,6 +54,7 @@ class Score:
         self.first_round_first_half_score = 0.0
         self.first_round_second_half_score = 0.0
         self.round_of_16_qualified_score = 0.0
+        self.quarter_finals_qualified_score = 0.0
 
         bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
         self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
@@ -63,6 +64,7 @@ class Score:
             self.score_by_bets = self._compute_all_bets()
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
             self.total_score += self.round_of_16_qualified_score
+            self.total_score += self.quarter_finals_qualified_score
 
             third_place = Bet.get_by_match_id(self.player, 63)
             final = Bet.get_by_match_id(self.player, 64)
@@ -130,10 +132,10 @@ class Score:
                     self.round_of_16_qualified_score += 6
 
             if bet.game.stage == Game.QUARTER_FINALS:
-                if bet.home_team == bet.game.home_team:
-                    bet_score += 8
-                if bet.away_team == bet.game.away_team:
-                    bet_score += 8
+                if bet.home_team == bet.game.home_team or bet.home_team == bet.game.away_team:
+                    self.quarter_finals_qualified_score += 8
+                if bet.away_team == bet.game.away_team or bet.away_team == bet.game.home_team:
+                    self.quarter_finals_qualified_score += 8
 
             if bet.game.stage == Game.SEMI_FINALS:
                 if bet.home_team == bet.game.home_team:
@@ -177,6 +179,13 @@ class Score:
         for i in range(49, 57):
             bets.append(self.bets[i])
         return bets
+
+    def get_quarter_finals_bets(self):
+        bets = []
+        for i in range(57, 61):
+            bets.append(self.bets[i])
+        return bets
+
 
 def build_list_simple_bet_objects(bets):
     simples_bets = []
