@@ -4,7 +4,7 @@
 {% block head %}
   <style>
     .gray {
-      background-color: lightgray;
+      background-color: #F6F6F6;
     }
 
     body {
@@ -20,6 +20,16 @@
     .table {
       margin-top: 5px
     }
+
+    h6.match-table {
+      margin-bottom: 2px;
+      margin-top: 2px;
+    }
+
+    h6.score {
+      margin-left: 17px;
+    }
+
 
   </style>
 
@@ -244,18 +254,24 @@
       </div>
       {% for match in round_of_16_matches %}
         <div class="col-md-1 col-xs-1">
-        {% if match.home_team %}
-        <h6><img src="/static/flags/{{ match.home_team.code }}.png">
-        {% else %}
-        <h6>?
-        {% endif %}
-          x
-{#          {{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}#}
-        {% if match.away_team %}
-          <img src="/static/flags/{{ match.away_team.code }}.png"></h6>
-        {% else %}
-        ?</h6>
-        {% endif %}
+          <div class="row">
+            {% if match.home_team %}
+              <h6><img src="/static/flags/{{ match.home_team.code }}.png">
+            {% else %}
+              <h6>?
+            {% endif %}
+            x
+            {% if match.away_team %}
+              <img src="/static/flags/{{ match.away_team.code }}.png"></h6>
+            {% else %}
+              ?</h6>
+            {% endif %}
+          </div>
+          {% if match.home_team and match.away_team %}
+            <div class="row">
+              <h6 class="finals score">{{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}</h6>
+            </div>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
@@ -265,21 +281,29 @@
       </div>
     </div>
     {% for score in scores %}
-      <div class="row">
-        <div class="col-md-1 col-xs-1 {% if score.player == me.player %} gray {% endif %}">
+      <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+        <div class="col-md-1 col-xs-1">
           <h6>{{ score.player.user.username }}</h6>
         </div>
         <div class="col-md-1 col-xs-1">
-          <h6><em>+ {{ score.round_of_16_qualified_score }}</em></h6>
+          <div class="row">
+            <h6 style="margin-bottom: 2px; margin-top: 2px"><em>+ {{ score.round_of_16_qualified_score }}</em></h6>
+          </div>
+          <div class="row">
+            <h6 style="margin-bottom: 2px; margin-top: 2px"><em>+ {{ score.get_round_of_16_results_score }}</em></h6>
+          </div>
         </div>
         {% for bet in score.get_round_of_16_bets %}
           <div class="col-md-1 col-xs-1">
-            <h6><img src="/static/flags/{{ bet.home_team.code }}.png">
-{#              <span class="glyphicon glyphicon-ok"></span>#}
-
-              x
-              {#      {{ bet.home_score }} x {{ bet.home_score }}#}
-              <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+            <div class="row">
+              <h6 style="margin-bottom: 2px; margin-top: 2px"><img src="/static/flags/{{ bet.home_team.code }}.png">
+                x
+                <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+            </div>
+            <div class="row">
+              <h6 style="margin-bottom: 2px; margin-top: 2px; margin-left: 17px">{{ bet.home_score }}
+                x {{ bet.home_score }}</h6>
+            </div>
           </div>
         {% endfor %}
       </div>
@@ -296,18 +320,25 @@
       </div>
       {% for match in quarter_finals_matches %}
         <div class="col-md-1 col-xs-1">
-        {% if match.home_team %}
-        <h6><img src="/static/flags/{{ match.home_team.code }}.png">
-        {% else %}
-        <h6>?
-        {% endif %}
-          x
-{#          {{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}#}
-        {% if match.away_team %}
-          <img src="/static/flags/{{ match.away_team.code }}.png"></h6>
-        {% else %}
-        ?</h6>
-        {% endif %}
+          <div class="row">
+            {% if match.home_team %}
+              <h6 class="match-table"><img src="/static/flags/{{ match.home_team.code }}.png">
+            {% else %}
+              <h6>?
+            {% endif %}
+            x
+            {% if match.away_team %}
+              <img src="/static/flags/{{ match.away_team.code }}.png"></h6>
+            {% else %}
+              ?</h6>
+            {% endif %}
+          </div>
+          {% if match.home_team and match.away_team %}
+            <div class="row">
+              <h6 class=" match-table score">{{ match.home_goals_normal_time }}
+                x {{ match.away_goals_normal_time }}</h6>
+            </div>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
@@ -317,21 +348,28 @@
       </div>
     </div>
     {% for score in scores %}
-      <div class="row">
-        <div class="col-md-1 col-xs-1 {% if score.player == me.player %} gray {% endif %}">
+      <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
+        <div class="col-md-1 col-xs-1">
           <h6>{{ score.player.user.username }}</h6>
         </div>
         <div class="col-md-1 col-xs-1">
-          <h6><em>+ {{ score.quarter_finals_qualified_score }}</em></h6>
+          <div class="row">
+          <h6 class="match-table"><em>+ {{ score.quarter_finals_qualified_score }}</em></h6>
+            </div>
+          <div class="row">
+            <h6 class="match-table"><em>+ {{ score.get_quarter_finals_result_score }}</em></h6>
+          </div>
         </div>
         {% for bet in score.get_quarter_finals_bets %}
           <div class="col-md-1 col-xs-1">
-            <h6><img src="/static/flags/{{ bet.home_team.code }}.png">
-{#              <span class="glyphicon glyphicon-ok"></span>#}
-
-              x
-              {#      {{ bet.home_score }} x {{ bet.home_score }}#}
-              <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+            <div class="row">
+              <h6 class="match-table"><img src="/static/flags/{{ bet.home_team.code }}.png">
+                x
+                <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>
+            </div>
+            <div class="row">
+              <h6 class="match-table score">{{ bet.home_score }} x {{ bet.home_score }}</h6>
+            </div>
           </div>
         {% endfor %}
       </div>

@@ -186,6 +186,18 @@ class Score:
             bets.append(self.bets[i])
         return bets
 
+    def get_round_of_16_results_score(self):
+        sum = 0
+        for i in range(49, 57):
+            sum += self.score_by_bets[i]
+        return sum
+
+    def get_quarter_finals_result_score(self):
+        sum = 0
+        for i in range(57, 61):
+            sum += self.score_by_bets[i]
+        return sum
+
 
 def build_list_simple_bet_objects(bets):
     simples_bets = []
