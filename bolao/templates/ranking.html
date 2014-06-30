@@ -267,7 +267,7 @@
               ?</h6>
             {% endif %}
           </div>
-          {% if match.home_team and match.away_team %}
+          {% if match.status == 'H' or match.status == 'F' %}
             <div class="row">
               <h6 class="finals score">{{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}</h6>
             </div>
@@ -333,7 +333,7 @@
               ?</h6>
             {% endif %}
           </div>
-          {% if match.home_team and match.away_team %}
+          {% if match.status == 'H' or match.status == 'F' %}
             <div class="row">
               <h6 class=" match-table score">{{ match.home_goals_normal_time }}
                 x {{ match.away_goals_normal_time }}</h6>
