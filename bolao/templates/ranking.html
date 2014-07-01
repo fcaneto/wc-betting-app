@@ -113,11 +113,11 @@
       <div class="col-md-1"></div>
 
       <div class="col-md-6">
-        {% if not bet_room.is_open_to_betting %}
-          <h3>Principal rival: </h3>
-          <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}
-            ({{ me.player.rival_correlation }} similar)</h5>
-        {% endif %}
+{#        {% if not bet_room.is_open_to_betting %}#}
+{#          <h3>Principal rival: </h3>#}
+{#          <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}#}
+{#            ({{ me.player.rival_correlation }} similar)</h5>#}
+{#        {% endif %}#}
 
         <h3>Classificação: </h3>
         {% for score in scores %}
@@ -269,7 +269,7 @@
           </div>
           {% if match.status == 'H' or match.status == 'F' %}
             <div class="row">
-              <h6 class="finals score">{{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}</h6>
+              <h6 class="match-table score">{{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}</h6>
             </div>
           {% endif %}
         </div>
