@@ -152,6 +152,12 @@ class Game(TimestampedModel):
     def get_loser(self):
         return self.home_team if self.get_winner() == self.away_team else self.away_team
 
+    def is_home_team_winner(self):
+        return self.home_team == self.get_winner()
+
+    def is_away_team_winner(self):
+        return self.away_team == self.get_winner()
+
     def has_started(self):
         return self.status != Game.STATUS_NOT_STARTED
 
@@ -240,6 +246,12 @@ class Bet(TimestampedModel):
 
     def get_loser(self):
         return self.home_team if self.get_winner() == self.away_team else self.away_team
+
+    def is_home_team_winner(self):
+        return self.home_team == self.get_winner()
+
+    def is_away_team_winner(self):
+        return self.away_team == self.get_winner()
 
     @staticmethod
     def query_all_bets(player):

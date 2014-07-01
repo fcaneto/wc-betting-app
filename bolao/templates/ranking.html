@@ -335,8 +335,7 @@
           </div>
           {% if match.status == 'H' or match.status == 'F' %}
             <div class="row">
-              <h6 class=" match-table score">{{ match.home_goals_normal_time }}
-                x {{ match.away_goals_normal_time }}</h6>
+              <h6 class="match-table score">{{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}</h6>
             </div>
           {% endif %}
         </div>
@@ -376,6 +375,75 @@
     {% endfor %}
 
   </div>
+
+
+{#  <div class="tab-pane fade" id="finals">#}
+{#    <h4>Semi-final e finais:</h4>#}
+{##}
+{#    <div class="row">#}
+{#      <div class="col-md-2 col-xs-2">#}
+{#        <h5>Jogos:</h5>#}
+{#      </div>#}
+{#      {% for match in quarter_finals_matches %}#}
+{#        <div class="col-md-1 col-xs-1">#}
+{#          <div class="row">#}
+{#            {% if match.home_team %}#}
+{#              <h6 class="match-table"><img src="/static/flags/{{ match.home_team.code }}.png">#}
+{#            {% else %}#}
+{#              <h6>?#}
+{#            {% endif %}#}
+{#            x#}
+{#            {% if match.away_team %}#}
+{#              <img src="/static/flags/{{ match.away_team.code }}.png"></h6>#}
+{#            {% else %}#}
+{#              ?</h6>#}
+{#            {% endif %}#}
+{#          </div>#}
+{#          {% if match.status == 'H' or match.status == 'F' %}#}
+{#            <div class="row">#}
+{#              <h6 class="match-table score">{{ match.home_goals_normal_time }} x {{ match.away_goals_normal_time }}</h6>#}
+{#            </div>#}
+{#          {% endif %}#}
+{#        </div>#}
+{#      {% endfor %}#}
+{#    </div>#}
+{#    <div class="row">#}
+{#      <div class="col-md-2 col-xs-2">#}
+{#        <h5>Apostas:</h5>#}
+{#      </div>#}
+{#    </div>#}
+{#    {% for score in scores %}#}
+{#      <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">#}
+{#        <div class="col-md-1 col-xs-1">#}
+{#          <h6>{{ score.player.user.username }}</h6>#}
+{#        </div>#}
+{#        <div class="col-md-1 col-xs-1">#}
+{#          <div class="row">#}
+{#          <h6 class="match-table"><em>+ {{ score.quarter_finals_qualified_score }}</em></h6>#}
+{#            </div>#}
+{#          <div class="row">#}
+{#            <h6 class="match-table"><em>+ {{ score.get_quarter_finals_result_score }}</em></h6>#}
+{#          </div>#}
+{#        </div>#}
+{#        {% for bet in score.get_quarter_finals_bets %}#}
+{#          <div class="col-md-1 col-xs-1">#}
+{#            <div class="row">#}
+{#              <h6 class="match-table"><img src="/static/flags/{{ bet.home_team.code }}.png">#}
+{#                x#}
+{#                <img src="/static/flags/{{ bet.away_team.code }}.png"></h6>#}
+{#            </div>#}
+{#            <div class="row">#}
+{#              <h6 class="match-table score">{{ bet.home_score }} x {{ bet.away_score }}</h6>#}
+{#            </div>#}
+{#          </div>#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#    {% endfor %}#}
+{##}
+{#  </div>#}
+
+
+
   </div>
 
 

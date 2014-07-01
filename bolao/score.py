@@ -6,6 +6,7 @@ from bolao.models import BetRoom, Bet, Game
 from itertools import izip
 from django.core.cache import cache
 
+
 def build_scores(bet_room=None):
     print 'BUILDING Scores...'
     scores = []
@@ -23,12 +24,14 @@ def build_scores(bet_room=None):
         cache.set('scores_%s' % bet_room.id, scores)
     print 'BUILDING Scores... OK'
 
+
 def get_scores(bet_room):
     #scores = cache.get('scores_%s' % bet_room.id)
     #if not scores:
     scores = build_scores(bet_room)
-        #scores = cache.get('scores_%s' % bet_room.id)
+    #scores = cache.get('scores_%s' % bet_room.id)
     return scores
+
 
 class Score:
     """
@@ -109,7 +112,8 @@ class Score:
                     score += 2
             elif not bet.is_a_tie() and not bet.game.is_a_tie():
                 # jogador não apostou em empate E não foi empate
-                if bet.get_winner() == bet.game.get_winner():
+                if (bet.is_home_team_winner() and bet.game.is_home_team_winner()) \
+                    or (bet.is_away_team_winner() and bet.game.is_away_team_winner()):
                     score += 3
                     if bet.home_score == bet.game.home_goals_normal_time:
                         score += 1.5
@@ -203,6 +207,6 @@ def build_list_simple_bet_objects(bets):
     simples_bets = []
     for bet in bets:
         simple_bet = {'away_team_code': bet.away_team.code,
-                      'home_team_code': bet.home_team.code,}
+                      'home_team_code': bet.home_team.code, }
 
 
