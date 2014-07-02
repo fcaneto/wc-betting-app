@@ -199,6 +199,14 @@ class Game(TimestampedModel):
     def get_quarter_finals_games():
         return Game.objects.filter(id__range=(57, 60)).order_by('id')
 
+    @staticmethod
+    def get_semi_finals_games():
+        return Game.objects.filter(id__range=(61, 62)).order_by('id')
+
+    @staticmethod
+    def get_finals_games():
+        return Game.objects.filter(id__range=(63, 64)).order_by('id')
+
     #@staticmethod
     #def get_last_game():
     #    """
@@ -252,6 +260,14 @@ class Bet(TimestampedModel):
 
     def is_away_team_winner(self):
         return self.away_team == self.get_winner()
+
+    def teams_got_right(self):
+        teams = 0
+        if self.home_team == self.game.home_team or self.home_team == self.game.away_team:
+            teams += 1
+        if self.away_team == self.game.away_team or self.away_team == self.game.home_team:
+            teams += 1
+        return teams
 
     @staticmethod
     def query_all_bets(player):

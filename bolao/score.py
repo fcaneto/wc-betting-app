@@ -58,6 +58,7 @@ class Score:
         self.first_round_second_half_score = 0.0
         self.round_of_16_qualified_score = 0.0
         self.quarter_finals_qualified_score = 0.0
+        self.finals_qualified_score = 0.0
 
         bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
         self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
@@ -69,21 +70,21 @@ class Score:
             self.total_score += self.round_of_16_qualified_score
             self.total_score += self.quarter_finals_qualified_score
 
-            third_place = Bet.get_by_match_id(self.player, 63)
-            final = Bet.get_by_match_id(self.player, 64)
+            self.third_place_bet = Bet.get_by_match_id(self.player, 63)
+            self.final_bet = Bet.get_by_match_id(self.player, 64)
 
             # pontos por acertar os quatro primeiros
             self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
-            if third_place.get_loser() == third_place.game.get_loser():
+            if self.third_place_bet.get_loser() == self.third_place_bet.game.get_loser():
                 self.podium_scores[4] = 3
                 self.total_score += 3
-            if third_place.get_winner() == third_place.game.get_winner():
+            if self.third_place_bet.get_winner() == self.third_place_bet.game.get_winner():
                 self.podium_scores[3] = 4
                 self.total_score += 4
-            if final.get_loser() == final.game.get_loser():
+            if self.final_bet.get_loser() == self.final_bet.game.get_loser():
                 self.podium_scores[2] = 10
                 self.total_score += 10
-            if final.get_winner() == final.game.get_winner():
+            if self.final_bet.get_winner() == self.final_bet.game.get_winner():
                 self.podium_scores[1] = 15
                 self.total_score += 15
 
@@ -130,36 +131,21 @@ class Score:
 
             # Extra points for secound round
             if bet.game.stage == Game.ROUND_OF_16:
-                if bet.home_team == bet.game.home_team or bet.home_team == bet.game.away_team:
-                    self.round_of_16_qualified_score += 6
-                if bet.away_team == bet.game.away_team or bet.away_team == bet.game.home_team:
-                    self.round_of_16_qualified_score += 6
+                self.round_of_16_qualified_score += 6 * bet.teams_got_right()
 
             if bet.game.stage == Game.QUARTER_FINALS:
-                if bet.home_team == bet.game.home_team or bet.home_team == bet.game.away_team:
-                    self.quarter_finals_qualified_score += 8
-                if bet.away_team == bet.game.away_team or bet.away_team == bet.game.home_team:
-                    self.quarter_finals_qualified_score += 8
+                self.quarter_finals_qualified_score += 8 * bet.teams_got_right()
 
             if bet.game.stage == Game.SEMI_FINALS:
-                if bet.home_team == bet.game.home_team:
-                    bet_score += 10
-                if bet.away_team == bet.game.away_team:
-                    bet_score += 10
+                self.finals_qualified_score += 10 * bet.teams_got_right()
 
             if bet.game.id == 63:
                 # Disputa do terceiro lugar
-                if bet.home_team == bet.game.home_team:
-                    bet_score += 6
-                if bet.away_team == bet.game.away_team:
-                    bet_score += 6
+                self.finals_qualified_score += 6 * bet.teams_got_right()
 
             if bet.game.id == 64:
                 # Disputa da final
-                if bet.home_team == bet.game.home_team:
-                    bet_score += 12
-                if bet.away_team == bet.game.away_team:
-                    bet_score += 12
+                self.finals_qualified_score += 12 * bet.teams_got_right()
 
             score_by_game[bet.game.id] = bet_score
             if game_id < 25:
@@ -190,15 +176,27 @@ class Score:
             bets.append(self.bets[i])
         return bets
 
+    def get_finals_bets(self):
+        bets = []
+        for i in range(61, 65):
+            bets.append(self.bets[i])
+        return bets
+
     def get_round_of_16_results_score(self):
-        sum = 0
+        sum = 0.0
         for i in range(49, 57):
             sum += self.score_by_bets[i]
         return sum
 
     def get_quarter_finals_result_score(self):
-        sum = 0
+        sum = 0.0
         for i in range(57, 61):
+            sum += self.score_by_bets[i]
+        return sum
+
+    def get_finals_result_score(self):
+        sum = 0.0
+        for i in range(61, 65):
             sum += self.score_by_bets[i]
         return sum
 
