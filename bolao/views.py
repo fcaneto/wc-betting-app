@@ -105,7 +105,13 @@ def logout(request):
 
 def build_ranking_data(request):
 
+    start_time = time.time()
+
     scores = get_scores(request.user.player.bet_room)
+
+    elapsed_time = time.time() - start_time
+    print '[build_ranking_data.1]: %.3f' % (elapsed_time)
+    start_time = time.time()
 
     current_games = Game.get_current_games()
     current_games_bets = []
@@ -139,6 +145,9 @@ def build_ranking_data(request):
             current_games_bets.append({'first_name': score.player.user.first_name,
                                        'last_name': score.player.user.last_name,
                                        'bets': game_bets})
+
+    elapsed_time = time.time() - start_time
+    print '[build_ranking_data.2]: %.3f' % (elapsed_time)
 
     return current_games, current_games_bets, my_current_games_bets, scores
 
