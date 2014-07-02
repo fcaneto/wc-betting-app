@@ -60,12 +60,25 @@ class Score:
         self.quarter_finals_qualified_score = 0.0
         self.finals_qualified_score = 0.0
 
+        import time
+        start_time = time.time()
+
         bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
         self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
 
+        elapsed_time = time.time() - start_time
+        print '[Score.1]: %.3f' % (elapsed_time)
+        start_time = time.time()
+
         if self.bets:
             self.has_bet = True
+            
             self.score_by_bets = self._compute_all_bets()
+
+            elapsed_time = time.time() - start_time
+            print '[Score.2]: %.3f' % (elapsed_time)
+            start_time = time.time()
+
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
             self.total_score += self.round_of_16_qualified_score
             self.total_score += self.quarter_finals_qualified_score
@@ -87,6 +100,9 @@ class Score:
             if self.final_bet.get_winner() == self.final_bet.game.get_winner():
                 self.podium_scores[1] = 15
                 self.total_score += 15
+
+            elapsed_time = time.time() - start_time
+            print '[Score.3]: %.3f' % (elapsed_time)
 
     def set_games_for_variation(self, games):
         self.variation_game_ids = []

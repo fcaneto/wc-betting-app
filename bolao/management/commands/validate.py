@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = 'Correlate players'
+    help = 'Validate players bets'
 
     def handle(self, *args, **options):
 
