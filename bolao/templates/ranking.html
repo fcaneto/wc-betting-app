@@ -114,11 +114,11 @@
       <div class="col-md-1"></div>
 
       <div class="col-md-6">
-{#        {% if not bet_room.is_open_to_betting %}#}
-{#          <h3>Principal rival: </h3>#}
-{#          <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}#}
-{#            ({{ me.player.rival_correlation }} similar)</h5>#}
-{#        {% endif %}#}
+        {#        {% if not bet_room.is_open_to_betting %}#}
+        {#          <h3>Principal rival: </h3>#}
+        {#          <h5>{{ me.player.rival.user.first_name }} {{ me.player.rival.user.last_name }}#}
+        {#            ({{ me.player.rival_correlation }} similar)</h5>#}
+        {#        {% endif %}#}
 
         <h3>Classificação: </h3>
         {% for score in scores %}
@@ -354,8 +354,8 @@
         </div>
         <div class="col-md-1 col-xs-1">
           <div class="row">
-          <h6 class="match-table"><em>+ {{ score.quarter_finals_qualified_score }}</em></h6>
-            </div>
+            <h6 class="match-table"><em>+ {{ score.quarter_finals_qualified_score }}</em></h6>
+          </div>
           <div class="row">
             <h6 class="match-table"><em>+ {{ score.get_quarter_finals_result_score }}</em></h6>
           </div>
@@ -382,15 +382,15 @@
     <h4>Semi-final e finais:</h4>
 
     <div class="row">
-      <div class="col-md-2 col-xs-2"> </div>
-      <div class="col-md-2 col-xs-2" style="padding-left: 0px"> <h5>Semi-Finais:</h5></div>
-      <div class="col-md-1 col-xs-1" style="padding-left: 0px"> <h5>3o. lugar:</h5></div>
-      <div class="col-md-1 col-xs-1" style="padding-left: 0px"> <h5>Final:</h5></div>
-      <div class="col-md-1 col-xs-1"> </div>
-      <div class="col-md-1 col-xs-1" style="padding-left: 0px"> <h5>4o.:</h5></div>
-      <div class="col-md-1 col-xs-1" style="padding-left: 0px"> <h5>3o.:</h5></div>
-      <div class="col-md-1 col-xs-1" style="padding-left: 0px"> <h5>Vice:</h5></div>
-      <div class="col-md-1 col-xs-1" style="padding-left: 0px"> <h5>Campeão:</h5></div>
+      <div class="col-md-2 col-xs-2"></div>
+      <div class="col-md-2 col-xs-2" style="padding-left: 0px"><h5>Semi-Finais:</h5></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px"><h5>3o. lugar:</h5></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px"><h5>Final:</h5></div>
+      <div class="col-md-1 col-xs-1"></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px"><h5>4o.:</h5></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px"><h5>3o.:</h5></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px"><h5>Vice:</h5></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px"><h5>Campeão:</h5></div>
     </div>
 
     <div class="row">
@@ -398,7 +398,7 @@
         <h5>Jogos:</h5>
       </div>
 
-        {% for match in semi_finals %}
+      {% for match in semi_finals %}
         <div class="col-md-1 col-xs-1">
           <div class="row">
             {% if match.home_team %}
@@ -444,6 +444,24 @@
         </div>
       {% endfor %}
 
+      <div class="col-md-1 col-xs-1"></div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px">
+{#        <img src="/static/flags/{{ score.third_place_bet.get_loser.code }}.png">#}
+        <h6>?</h6>
+      </div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px">
+{#        <img src="/static/flags/{{ score.third_place_bet.get_winner.code }}.png">#}
+        <h6>?</h6>
+      </div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px">
+{#        <img src="/static/flags/{{ score.final_bet.get_loser.code }}.png">#}
+        <h6>?</h6>
+      </div>
+      <div class="col-md-1 col-xs-1" style="padding-left: 0px">
+{#        <img src="/static/flags/{{ score.final_bet.get_winner.code }}.png">#}
+        <h6>?</h6>
+      </div>
+
     </div>
 
     <div class="row">
@@ -458,8 +476,8 @@
         </div>
         <div class="col-md-1 col-xs-1">
           <div class="row">
-          <h6 class="match-table"><em>+ {{ score.finals_qualified_score }}</em></h6>
-            </div>
+            <h6 class="match-table"><em>+ {{ score.finals_qualified_score }}</em></h6>
+          </div>
           <div class="row">
             <h6 class="match-table"><em>+ {{ score.get_finals_result_score }}</em></h6>
           </div>
@@ -477,7 +495,7 @@
           </div>
         {% endfor %}
 
-        <div class="col-md-1 col-xs-1"> </div>
+        <div class="col-md-1 col-xs-1"></div>
         <div class="col-md-1 col-xs-1" style="padding-left: 0px">
           <img src="/static/flags/{{ score.third_place_bet.get_loser.code }}.png">
         </div>
@@ -493,7 +511,6 @@
       </div>
     {% endfor %}
   </div>
-
 
 
   </div>
