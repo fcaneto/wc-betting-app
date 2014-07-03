@@ -43,10 +43,6 @@ class Score:
 
     def __init__(self, user):
 
-        #self.player_id = user.player_id
-        #self.player_username = user.username
-        #self.player_first_name = user.first_name
-        #self.player_last_name = user.last_name
         self.player = user.player
 
         self.score_by_bets = {}
@@ -62,7 +58,7 @@ class Score:
 
         start_time = time.time()
 
-        bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
+        bet_list = Bet.query_all_bets(self.player)
         self.bets = dict(izip([bet.game_id for bet in bet_list], bet_list))
 
         elapsed_time = time.time() - start_time
@@ -177,7 +173,7 @@ class Score:
                 self.first_round_second_half_score += bet_score
 
             elapsed_time = time.time() - start_time
-            print '[Score.2.compute_all_bets]: %.3f' % (elapsed_time)
+            print '[Score.2.compute_all_bets %s]: %.3f' % (bet.game_id, elapsed_time)
 
 
         return score_by_game
@@ -226,12 +222,3 @@ class Score:
         for i in range(61, 65):
             sum += self.score_by_bets[i]
         return sum
-
-
-def build_list_simple_bet_objects(bets):
-    simples_bets = []
-    for bet in bets:
-        simple_bet = {'away_team_code': bet.away_team.code,
-                      'home_team_code': bet.home_team.code, }
-
-
