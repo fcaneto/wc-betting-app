@@ -133,42 +133,42 @@ LOGGING = {
 
 # Memcache
 
-#def get_cache():
-#  import os
-#  try:
-#    os.environ['MEMCACHE_SERVERS'] = os.environ['MEMCACHIER_SERVERS'].replace(',', ';')
-#    os.environ['MEMCACHE_USERNAME'] = os.environ['MEMCACHIER_USERNAME']
-#    os.environ['MEMCACHE_PASSWORD'] = os.environ['MEMCACHIER_PASSWORD']
-#    return {
-#      'default': {
-#        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-#        'TIMEOUT': 500,
-#        'BINARY': True,
-#        'OPTIONS': { 'tcp_nodelay': True }
-#      }
-#    }
-#  except:
-#    return {
-#      'default': {
-#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
-#      }
-#    }
-#
-#CACHES = get_cache()
+def get_cache():
+  import os
+  try:
+    os.environ['MEMCACHE_SERVERS'] = os.environ['MEMCACHIER_SERVERS'].replace(',', ';')
+    os.environ['MEMCACHE_USERNAME'] = os.environ['MEMCACHIER_USERNAME']
+    os.environ['MEMCACHE_PASSWORD'] = os.environ['MEMCACHIER_PASSWORD']
+    return {
+      'default': {
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+        'TIMEOUT': 500,
+        'BINARY': True,
+        'OPTIONS': { 'tcp_nodelay': True }
+      }
+    }
+  except:
+    return {
+      'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+      }
+    }
+
+CACHES = get_cache()
 
 # Redis
 
-import urlparse
-
-redis_url = urlparse.urlparse(os.environ.get('REDISTOGO_URL', 'redis://localhost:6959'))
-
-CACHES = {
-    'default': {
-        'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '%s:%s' % (redis_url.hostname, redis_url.port),
-        'OPTIONS': {
-            'DB': 0,
-            'PASSWORD': redis_url.password,
-        }
-    }
-}
+#import urlparse
+#
+#redis_url = urlparse.urlparse(os.environ.get('REDISTOGO_URL', 'redis://localhost:6959'))
+#
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'redis_cache.RedisCache',
+#        'LOCATION': '%s:%s' % (redis_url.hostname, redis_url.port),
+#        'OPTIONS': {
+#            'DB': 0,
+#            'PASSWORD': redis_url.password,
+#        }
+#    }
+#}

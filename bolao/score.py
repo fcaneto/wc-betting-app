@@ -21,7 +21,7 @@ def build_scores(bet_room=None):
         for user in User.objects.filter(player__bet_room=bet_room):
             scores.append(Score(user))
         scores.sort(key=lambda score: score.total_score, reverse=True)
-        cache.set('scores_%s' % bet_room.id, scores)
+        #cache.set('scores_%s' % bet_room.id, scores)
     print 'BUILDING Scores... OK'
 
 
@@ -144,7 +144,12 @@ class Score:
 
         for game_id, bet in self.bets.iteritems():
             game = bet.game
-            bet_score = self._compute_bet_score(bet, game)
+
+            key = 'score_%s' % (bet.id)
+            bet_score = cache.get(key)
+            if not bet_score:
+                bet_score = self._compute_bet_score(bet, game)
+                cache.set(key, bet_score)
 
             # Extra points for secound round
             if game.stage == Game.ROUND_OF_16:
