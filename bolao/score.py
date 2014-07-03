@@ -143,6 +143,8 @@ class Score:
         score_by_game = {}
 
         for game_id, bet in self.bets.iteritems():
+            start_time = time.time()
+
             game = bet.game
 
             key = 'score_%s' % (bet.id)
@@ -174,6 +176,10 @@ class Score:
                 self.first_round_first_half_score += bet_score
             elif bet.game_id < 49:
                 self.first_round_second_half_score += bet_score
+
+            elapsed_time = time.time() - start_time
+            print '[Score.2.compute_all_bets]: %.3f' % (elapsed_time)
+
 
         return score_by_game
 
