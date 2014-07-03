@@ -263,9 +263,9 @@ class Bet(TimestampedModel):
 
     def teams_got_right(self):
         teams = 0
-        if self.home_team == self.game.home_team or self.home_team == self.game.away_team:
+        if self.home_team_id == self.game.home_team_id or self.home_team_id == self.game.away_team_id:
             teams += 1
-        if self.away_team == self.game.away_team or self.away_team == self.game.home_team:
+        if self.away_team_id == self.game.away_team_id or self.away_team_id == self.game.home_team_id:
             teams += 1
         return teams
 
