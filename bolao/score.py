@@ -72,7 +72,7 @@ class Score:
 
         if self.bets:
             self.has_bet = True
-            
+
             self.score_by_bets = self._compute_all_bets()
 
             elapsed_time = time.time() - start_time
