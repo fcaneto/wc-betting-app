@@ -227,15 +227,15 @@ def player(request):
 
         # Adicionando estes atributo a cada bet para facilitar template
         for bet in group_bets:
-            bet.player_score = score.get_bet_score(bet.game.id)
+            bet.player_score = score.get_bet_score(bet.game_id)
         for bet in round_16_bets:
-            bet.player_score = score.get_bet_score(bet.game.id)
+            bet.player_score = score.get_bet_score(bet.game_id)
         for bet in quarter_bets:
-            bet.player_score = score.get_bet_score(bet.game.id)
+            bet.player_score = score.get_bet_score(bet.game_id)
         for bet in semi_bets:
-            bet.player_score = score.get_bet_score(bet.game.id)
-        third_place.player_score = score.get_bet_score(third_place.game.id)
-        final.player_score = score.get_bet_score(final.game.id)
+            bet.player_score = score.get_bet_score(bet.game_id)
+        third_place.player_score = score.get_bet_score(third_place.game_id)
+        final.player_score = score.get_bet_score(final.game_id)
 
     return render_to_response('player.html',
                               {'bet_room': request.user.player.bet_room,
@@ -344,35 +344,35 @@ def render_bets(user):
         match_data = {'homeScore': bet.home_score,
                       'awayScore': bet.away_score}
         group = bet.game.home_team.group.name
-        response_data['groups'][group][bet.game.id] = match_data
+        response_data['groups'][group][bet.game_id] = match_data
 
     for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.ROUND_OF_16):
-        match_data = {'id': bet.game.id,
+        match_data = {'id': bet.game_id,
                       'homeScore': bet.home_score,
                       'awayScore': bet.away_score,
                       'winnerCode': bet.get_winner().code}
-        response_data['roundOf16'][bet.game.id] = match_data
+        response_data['roundOf16'][bet.game_id] = match_data
 
     for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.QUARTER_FINALS):
-        match_data = {'id': bet.game.id,
+        match_data = {'id': bet.game_id,
                       'homeScore': bet.home_score,
                       'awayScore': bet.away_score,
                       'winnerCode': bet.get_winner().code}
-        response_data['quarterFinals'][bet.game.id] = match_data
+        response_data['quarterFinals'][bet.game_id] = match_data
 
     for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.SEMI_FINALS):
-        match_data = {'id': bet.game.id,
+        match_data = {'id': bet.game_id,
                       'homeScore': bet.home_score,
                       'awayScore': bet.away_score,
                       'winnerCode': bet.get_winner().code}
-        response_data['semiFinals'][bet.game.id] = match_data
+        response_data['semiFinals'][bet.game_id] = match_data
 
     for bet in Bet.query_all_bets(user.player).filter(game__stage=Game.FINALS):
-        match_data = {'id': bet.game.id,
+        match_data = {'id': bet.game_id,
                       'homeScore': bet.home_score,
                       'awayScore': bet.away_score,
                       'winnerCode': bet.get_winner().code}
-        response_data['finals'][bet.game.id] = match_data
+        response_data['finals'][bet.game_id] = match_data
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 

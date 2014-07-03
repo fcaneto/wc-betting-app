@@ -155,15 +155,15 @@ class Score:
             if bet.game.stage == Game.SEMI_FINALS:
                 self.finals_qualified_score += 10 * bet.teams_got_right()
 
-            if bet.game.id == 63:
+            if bet.game_id == 63:
                 # Disputa do terceiro lugar
                 self.finals_qualified_score += 6 * bet.teams_got_right()
 
-            if bet.game.id == 64:
+            if bet.game_id == 64:
                 # Disputa da final
                 self.finals_qualified_score += 12 * bet.teams_got_right()
 
-            score_by_game[bet.game.id] = bet_score
+            score_by_game[bet.game_id] = bet_score
             if game_id < 25:
                 self.first_round_first_half_score += bet_score
             elif game_id < 49:

@@ -235,11 +235,11 @@ class Bet(TimestampedModel):
 
     def __str__(self):
         if self.winner:
-            return '[%s] %s %s X %s %s > %s' % (self.game.id, self.home_team,
+            return '[%s] %s %s X %s %s > %s' % (self.game_id, self.home_team,
                                               self.home_score, self.away_score,
                                               self.away_team, self.winner)
         else:
-            return '[%s] %s %s X %s %s' % (self.game.id, self.game.home_team,
+            return '[%s] %s %s X %s %s' % (self.game_id, self.game.home_team,
                                            self.home_score, self.away_score,
                                            self.game.away_team)
 
