@@ -271,7 +271,7 @@ class Bet(TimestampedModel):
 
     @staticmethod
     def query_all_bets(player):
-        return Bet.objects.filter(player=player)
+        return Bet.objects.filter(player=player).select_related('game')
 
     @staticmethod
     def get_by_match_id(player, match_id):

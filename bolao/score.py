@@ -118,23 +118,23 @@ class Score:
     def get_bet_score(self, match_id):
         return self.score_by_bets.get(match_id, 0.0)
 
-    def _compute_bet_score(self, bet):
+    def _compute_bet_score(self, bet, game):
         score = 0.0
 
-        if bet.game.status != Game.STATUS_NOT_STARTED:
-            if bet.is_a_tie() and bet.game.is_a_tie():
+        if game.status != Game.STATUS_NOT_STARTED:
+            if bet.is_a_tie() and game.is_a_tie():
             # jogador apostou no empate E foi empate
                 score += 4
-                if bet.home_score == bet.game.home_goals_normal_time:
+                if bet.home_score == game.home_goals_normal_time:
                     score += 2
-            elif not bet.is_a_tie() and not bet.game.is_a_tie():
+            elif not bet.is_a_tie() and not game.is_a_tie():
                 # jogador não apostou em empate E não foi empate
-                if (bet.is_home_team_winner() and bet.game.is_home_team_winner()) \
-                    or (bet.is_away_team_winner() and bet.game.is_away_team_winner()):
+                if (bet.is_home_team_winner() and game.is_home_team_winner()) \
+                    or (bet.is_away_team_winner() and game.is_away_team_winner()):
                     score += 3
-                    if bet.home_score == bet.game.home_goals_normal_time:
+                    if bet.home_score == game.home_goals_normal_time:
                         score += 1.5
-                    if bet.away_score == bet.game.away_goals_normal_time:
+                    if bet.away_score == game.away_goals_normal_time:
                         score += 1.5
 
         return score
@@ -143,16 +143,17 @@ class Score:
         score_by_game = {}
 
         for game_id, bet in self.bets.iteritems():
-            bet_score = self._compute_bet_score(bet)
+            game = bet.game
+            bet_score = self._compute_bet_score(bet, game)
 
             # Extra points for secound round
-            if bet.game.stage == Game.ROUND_OF_16:
+            if game.stage == Game.ROUND_OF_16:
                 self.round_of_16_qualified_score += 6 * bet.teams_got_right()
 
-            if bet.game.stage == Game.QUARTER_FINALS:
+            if game.stage == Game.QUARTER_FINALS:
                 self.quarter_finals_qualified_score += 8 * bet.teams_got_right()
 
-            if bet.game.stage == Game.SEMI_FINALS:
+            if game.stage == Game.SEMI_FINALS:
                 self.finals_qualified_score += 10 * bet.teams_got_right()
 
             if bet.game_id == 63:
@@ -164,9 +165,9 @@ class Score:
                 self.finals_qualified_score += 12 * bet.teams_got_right()
 
             score_by_game[bet.game_id] = bet_score
-            if game_id < 25:
+            if bet.game_id < 25:
                 self.first_round_first_half_score += bet_score
-            elif game_id < 49:
+            elif bet.game_id < 49:
                 self.first_round_second_half_score += bet_score
 
         return score_by_game
