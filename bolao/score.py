@@ -64,7 +64,7 @@ class Score:
         start_time = time.time()
 
         bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
-        self.bets = dict(izip([bet.game.id for bet in bet_list], bet_list))
+        self.bets = dict(izip([bet.game_id for bet in bet_list], bet_list))
 
         elapsed_time = time.time() - start_time
         print '[Score.1]: %.3f' % (elapsed_time)
