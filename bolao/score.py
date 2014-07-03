@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from bolao.models import BetRoom, Bet, Game
 from itertools import izip
 from django.core.cache import cache
-
+import time
 
 def build_scores(bet_room=None):
     print 'BUILDING Scores...'
@@ -60,7 +60,6 @@ class Score:
         self.quarter_finals_qualified_score = 0.0
         self.finals_qualified_score = 0.0
 
-        import time
         start_time = time.time()
 
         bet_list = Bet.query_all_bets(self.player) #build_list_simple_bet_objects(Bet.query_all_bets(self.player))
