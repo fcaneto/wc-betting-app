@@ -163,7 +163,7 @@ class Game(TimestampedModel):
 
     def save(self, update_ts=True, *args, **kwargs):
         from django.core.cache import cache
-        for bet in self.bet_set:
+        for bet in self.bet_set.all():
             cache.delete('score_%s' % bet.id)
 
         super(Game, self).save(*args, **kwargs)
