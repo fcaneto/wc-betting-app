@@ -77,6 +77,7 @@ class Score:
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
             self.total_score += self.round_of_16_qualified_score
             self.total_score += self.quarter_finals_qualified_score
+            self.total_score += self.finals_qualified_score
 
             self.third_place_bet = Bet.get_by_match_id(self.player, 63)
             self.final_bet = Bet.get_by_match_id(self.player, 64)
