@@ -21,10 +21,10 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-#if settings.DEBUG:
-#    import debug_toolbar
-#    urlpatterns += patterns('',
-#        url(r'^__debug__/', include(debug_toolbar.urls)),
-#    )
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
 
 
