@@ -86,7 +86,12 @@ TEMPLATE_DIRS = (
 # Debug Toolbar
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
-INTERNAL_IPS = os.getenv('DEBUG_TOOLBAR_IP', '127.0.0.1')
+def show_toolbar(request):
+    return request.user.is_staff
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
