@@ -90,7 +90,7 @@ def show_toolbar(request):
     return request.user.is_staff
 
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+    'SHOW_TOOLBAR_CALLBACK': 'bolao.settings.show_toolbar',
 }
 
 # Internationalization
