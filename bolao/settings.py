@@ -61,7 +61,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'bolao',
     'south',
-    'gunicorn'
+    'gunicorn',
+    'debug_toolbar'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -71,6 +72,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'bolao.urls'
@@ -80,6 +82,10 @@ WSGI_APPLICATION = 'bolao.wsgi.application'
 TEMPLATE_DIRS = (
     BASE_DIR + '/templates'
 )
+
+# Debug Toolbar
+
+#DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
