@@ -74,6 +74,9 @@ class Score:
             print '[Score.2]: %.3f' % (elapsed_time)
             start_time = time.time()
 
+            self.third_place_bet = Bet.get_by_match_id(self.player, 63)
+            self.final_bet = Bet.get_by_match_id(self.player, 64)
+            
             # TODO: otimizar acesso aos games aqui
             # pontos por acertar os quatro primeiros
             self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
@@ -94,9 +97,6 @@ class Score:
             self.total_score += self.round_of_16_qualified_score
             self.total_score += self.quarter_finals_qualified_score
             self.total_score += self.finals_qualified_score
-
-            self.third_place_bet = Bet.get_by_match_id(self.player, 63)
-            self.final_bet = Bet.get_by_match_id(self.player, 64)
 
             elapsed_time = time.time() - start_time
             print '[Score.3]: %.3f' % (elapsed_time)
