@@ -87,13 +87,13 @@ class Score:
             # pontos por acertar os quatro primeiros
             self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
             if self.third_place_bet.get_loser() == self.third_place_bet.game.get_loser():
-                self.podium_scores[4] = 3
+                self.podium_scores[4] = 3.0
             if self.third_place_bet.get_winner() == self.third_place_bet.game.get_winner():
-                self.podium_scores[3] = 4
+                self.podium_scores[3] = 4.0
             if self.final_bet.get_loser() == self.final_bet.game.get_loser():
-                self.podium_scores[2] = 10
+                self.podium_scores[2] = 10.0
             if self.final_bet.get_winner() == self.final_bet.game.get_winner():
-                self.podium_scores[1] = 15
+                self.podium_scores[1] = 15.0
 
             self.finals_qualified_score += reduce(lambda x,y: x+y, self.podium_scores.values(), 0.0)
 
