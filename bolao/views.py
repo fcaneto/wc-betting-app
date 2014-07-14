@@ -179,7 +179,9 @@ def ranking(request):
                                           'round_of_16_matches': round_of_16_matches,
                                           'quarter_finals_matches': quarter_finals_matches,
                                           'semi_finals': semi_finals,
-                                          'finals': finals},
+                                          'finals': finals,
+                                          'third_place_dispute': finals[0],
+                                          'final_match': finals[1]},
                                          RequestContext(request))
     elapsed_time = time.time() - start_time
     print '[2]: %.3f' % (elapsed_time)

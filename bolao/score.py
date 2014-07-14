@@ -74,6 +74,22 @@ class Score:
             print '[Score.2]: %.3f' % (elapsed_time)
             start_time = time.time()
 
+            # TODO: otimizar acesso aos games aqui
+            # pontos por acertar os quatro primeiros
+            self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
+            if self.third_place_bet.get_loser() == self.third_place_bet.game.get_loser():
+                self.podium_scores[4] = 3
+                self.finals_qualified_score += 3
+            if self.third_place_bet.get_winner() == self.third_place_bet.game.get_winner():
+                self.podium_scores[3] = 4
+                self.finals_qualified_score += 4
+            if self.final_bet.get_loser() == self.final_bet.game.get_loser():
+                self.podium_scores[2] = 10
+                self.finals_qualified_score += 10
+            if self.final_bet.get_winner() == self.final_bet.game.get_winner():
+                self.podium_scores[1] = 15
+                self.finals_qualified_score += 15
+
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
             self.total_score += self.round_of_16_qualified_score
             self.total_score += self.quarter_finals_qualified_score
@@ -81,21 +97,6 @@ class Score:
 
             self.third_place_bet = Bet.get_by_match_id(self.player, 63)
             self.final_bet = Bet.get_by_match_id(self.player, 64)
-
-            # pontos por acertar os quatro primeiros
-            self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
-            if self.third_place_bet.get_loser() == self.third_place_bet.game.get_loser():
-                self.podium_scores[4] = 3
-                self.total_score += 3
-            if self.third_place_bet.get_winner() == self.third_place_bet.game.get_winner():
-                self.podium_scores[3] = 4
-                self.total_score += 4
-            if self.final_bet.get_loser() == self.final_bet.game.get_loser():
-                self.podium_scores[2] = 10
-                self.total_score += 10
-            if self.final_bet.get_winner() == self.final_bet.game.get_winner():
-                self.podium_scores[1] = 15
-                self.total_score += 15
 
             elapsed_time = time.time() - start_time
             print '[Score.3]: %.3f' % (elapsed_time)
