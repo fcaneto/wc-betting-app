@@ -54,7 +54,13 @@ class Score:
         self.first_round_second_half_score = 0.0
         self.round_of_16_qualified_score = 0.0
         self.quarter_finals_qualified_score = 0.0
+
+        # include both semi and finals matches
         self.finals_qualified_score = 0.0
+
+        self.semi_qualified_score = 0.0
+        self.third_place_dispute_qualified_score = 0.0
+        self.final_match_qualified_score = 0.0
 
         start_time = time.time()
 
@@ -82,16 +88,14 @@ class Score:
             self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
             if self.third_place_bet.get_loser() == self.third_place_bet.game.get_loser():
                 self.podium_scores[4] = 3
-                self.finals_qualified_score += 3
             if self.third_place_bet.get_winner() == self.third_place_bet.game.get_winner():
                 self.podium_scores[3] = 4
-                self.finals_qualified_score += 4
             if self.final_bet.get_loser() == self.final_bet.game.get_loser():
                 self.podium_scores[2] = 10
-                self.finals_qualified_score += 10
             if self.final_bet.get_winner() == self.final_bet.game.get_winner():
                 self.podium_scores[1] = 15
-                self.finals_qualified_score += 15
+
+            self.finals_qualified_score += reduce(lambda x,y: x+y, self.podium_scores.values(), 0.0)
 
             self.total_score = reduce(lambda x, y: x + y, self.score_by_bets.values(), 0.0)
             self.total_score += self.round_of_16_qualified_score
@@ -158,14 +162,17 @@ class Score:
 
             if game.stage == Game.SEMI_FINALS:
                 self.finals_qualified_score += 10 * bet.teams_got_right()
+                self.semi_qualified_score += 10 * bet.teams_got_right()
 
             if bet.game_id == 63:
                 # Disputa do terceiro lugar
                 self.finals_qualified_score += 6 * bet.teams_got_right()
+                self.third_place_dispute_qualified_score += 6 * bet.teams_got_right()
 
             if bet.game_id == 64:
                 # Disputa da final
                 self.finals_qualified_score += 12 * bet.teams_got_right()
+                self.final_match_qualified_score += 12 * bet.teams_got_right()
 
             score_by_game[bet.game_id] = bet_score
             if bet.game_id < 25:

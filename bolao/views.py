@@ -204,7 +204,12 @@ def rivals(request):
 
 @login_required(login_url='login')
 def player(request):
-    score = Score(request.user)
+    return player_detailed(request, request.user.id)
+
+def player_detailed(request, user_id):
+
+    user = User.objects.get(id=user_id)
+    score = Score(user)
 
     group_bets = []
     round_16_bets = []
@@ -213,7 +218,7 @@ def player(request):
     third_place = None
     final = None
 
-    player = request.user.player
+    player = user.player
 
     if Bet.query_all_bets(player).exists():
         group_bets = Bet.query_all_bets(player).filter(game__stage=Game.GROUP).order_by('game__id')
@@ -239,8 +244,14 @@ def player(request):
         third_place.player_score = score.get_bet_score(third_place.game_id)
         final.player_score = score.get_bet_score(final.game_id)
 
+    users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id)
+    current_user_name = '%s %s' % (user.first_name, user.last_name) if user in users else 'Você'
+
     return render_to_response('player.html',
-                              {'bet_room': request.user.player.bet_room,
+                              {'current_user_name': current_user_name,
+                               'users': users,
+                               'score': score,
+                               'bet_room': player.bet_room,
                                'group_bets': group_bets,
                                'round_16_bets': round_16_bets,
                                'quarter_bets': quarter_bets,

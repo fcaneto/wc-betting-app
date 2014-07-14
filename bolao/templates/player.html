@@ -7,8 +7,21 @@
       background-color: lightgray;
     }
 
+    .green {
+      background-color: lightgreen;
+    }
+
     body {
       margin-bottom: 20px;
+    }
+
+    .navbar-nav li label {
+      padding-top: 18px;
+      font-size: 11px
+    }
+
+    .dropdown-menu > li > a {
+      font-size: 12px;
     }
 
   </style>
@@ -17,12 +30,43 @@
 
 {% block playerActive %}active{% endblock %}
 
+{% block navbar %}
+  <ul class="nav navbar-nav">
+    <li class="dropdown">
+      <a class="dropdown-toggle" role="button" href="#" data-toggle="dropdown">
+        Ver outro jogador
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+        <li role="presentation">
+          <a role="menuitem" tabindex="-1" href="{% url 'player' %}">
+            Você
+          </a>
+        </li>
+        {% for user in users %}
+          <li role="presentation">
+            <a role="menuitem" tabindex="-1" href="{% url 'player_detailed' user.id %}">
+              {{ user.first_name }} {{ user.last_name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+    <li>
+      <label>Exibindo: <span>{{ current_user_name }}</span></label>
+    </li>
+  </ul>
+{% endblock %}
+
 {% block container %}
   {% if group_bets %}
 
     <div class="row">
+      <div class="col-md-8">
+        <h3>{{ current_user_name }}</h3>
+      </div>
       <div class="col-md-4">
-        <h3>Pontuação atual: {{ total_score }}</h3>
+        <h3>Pontuação total: {{ total_score }}</h3>
       </div>
     </div>
     <div class="row">
@@ -64,6 +108,19 @@
     {% endfor %}
 
     <h4>Oitavas</h4>
+    <div class="row green">
+      <div class="col-md-4">
+        <h6>Acerto dos classificados (6 pontos para cada):</h6>
+      </div>
+
+      <div class="col-md-4">
+      </div>
+
+      <div class="col-md-4">
+        <h6>{{ score.round_of_16_qualified_score }}</h6>
+      </div>
+    </div>
+
     {% for bet in round_16_bets %}
       {% with bet.game as match %}
         <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
@@ -92,6 +149,19 @@
     {% endfor %}
 
     <h4>Quartas</h4>
+    <div class="row green">
+      <div class="col-md-4">
+        <h6>Acerto dos classificados (8 pontos para cada):</h6>
+      </div>
+
+      <div class="col-md-4">
+      </div>
+
+      <div class="col-md-4">
+        <h6>{{ score.quarter_finals_qualified_score }}</h6>
+      </div>
+    </div>
+
     {% for bet in quarter_bets %}
       {% with bet.game as match %}
         <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
@@ -120,6 +190,16 @@
     {% endfor %}
 
     <h4>Semi-finais</h4>
+    <div class="row green">
+      <div class="col-md-8">
+        <h6>Acerto dos classificados (10 pontos para cada):</h6>
+      </div>
+
+      <div class="col-md-4">
+        <h6>{{ score.semi_qualified_score }}</h6>
+      </div>
+    </div>
+
     {% for bet in semi_bets %}
       {% with bet.game as match %}
         <div class="row {% if forloop.counter|divisibleby:2 %}gray{% endif %}">
@@ -148,6 +228,16 @@
     {% endfor %}
 
     <h4>Disputa de terceiro lugar</h4>
+    <div class="row green">
+      <div class="col-md-8">
+        <h6>Acerto dos classificados (6 pontos para cada):</h6>
+      </div>
+
+      <div class="col-md-4">
+        <h6>{{ score.semi_qualified_score }}</h6>
+      </div>
+    </div>
+
     {% with third_place as bet %}
       {% with bet.game as match %}
         <div class="row">
@@ -176,9 +266,19 @@
     {% endwith %}
 
     <h4>Final</h4>
+    <div class="row green">
+      <div class="col-md-8">
+        <h6>Acerto dos classificados (12 pontos para cada):</h6>
+      </div>
+
+      <div class="col-md-4">
+        <h6>{{ score.semi_qualified_score }}</h6>
+      </div>
+    </div>
+
     {% with final as bet %}
       {% with bet.game as match %}
-        <div class="row gray">
+        <div class="row">
           <div class="col-md-4">
             <h6>Jogo {{ match.id }}: {{ bet.home_team.name }} - {{ bet.home_score }} X {{ bet.away_score }}
               - {{ bet.away_team.name }} {% if bet.is_a_tie %} <em>({{ bet.winner.name }})</em>{% endif %}</h6>
