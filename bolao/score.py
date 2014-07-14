@@ -76,7 +76,7 @@ class Score:
 
             self.third_place_bet = Bet.get_by_match_id(self.player, 63)
             self.final_bet = Bet.get_by_match_id(self.player, 64)
-            
+
             # TODO: otimizar acesso aos games aqui
             # pontos por acertar os quatro primeiros
             self.podium_scores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
