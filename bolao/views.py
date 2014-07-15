@@ -247,10 +247,17 @@ def player_detailed(request, user_id):
     users = User.objects.filter(player__bet_room=request.user.player.bet_room).exclude(id=request.user.id)
     current_user_name = '%s %s' % (user.first_name, user.last_name) if user in users else 'Você'
 
+    first_round_score = score.first_round_first_half_score + score.first_round_second_half_score
+    second_round_score = score.round_of_16_qualified_score + score.get_round_of_16_results_score() + \
+                         score.quarter_finals_qualified_score + score.get_quarter_finals_result_score() + \
+                         score.finals_qualified_score + score.get_finals_result_score()
+
     return render_to_response('player.html',
                               {'current_user_name': current_user_name,
                                'users': users,
                                'score': score,
+                               'first_round_score': first_round_score,
+                               'second_round_score': second_round_score,
                                'bet_room': player.bet_room,
                                'group_bets': group_bets,
                                'round_16_bets': round_16_bets,
